@@ -1,8 +1,13 @@
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
-namespace mystd{
+#ifndef TVector_HPP
+#define TVector_HPP
+namespace NMystd{
+    struct TItem{
+        char key [33];
+        char value [2049];
+    };
+
     template<class T>
-    class vector {
+    class TVector {
     private:
         unsigned int Capacity;
         unsigned int Maxsize;
@@ -14,13 +19,13 @@ namespace mystd{
         void Push_back(T elem);
         T Pop_back();
         unsigned int Size();
-        vector();
-        vector(unsigned int n);
-        vector(unsigned int n, T elem);
-        ~vector();
+        TVector();
+        TVector(unsigned int n);
+        TVector(unsigned int n, T elem);
+        ~TVector();
     };
     template<class T>
-    void vector<T>::Assign(const unsigned int n, T elem) {
+    void TVector<T>::Assign(const unsigned int n, T elem) {
         delete[] Data;
         Maxsize = n*2;
         Data = new T[Maxsize];
@@ -31,19 +36,19 @@ namespace mystd{
     }
 
     template <class T>
-    void vector<T>::Clear(){
+    void TVector<T>::Clear(){
         Capacity = 0;
         Maxsize = 0;
         delete[] Data;
     }
 
     template<class T>
-    T& vector<T>::operator[](const unsigned int &index) {
+    T& TVector<T>::operator[](const unsigned int &index) {
         return Data[index];
     }
 
     template<class T>
-    void vector<T>::Push_back(T elem) {
+    void TVector<T>::Push_back(T elem) {
         if (Capacity == 0) {
             Maxsize = 1;
             Data = new T[Maxsize];
@@ -61,7 +66,7 @@ namespace mystd{
     }
 
     template<class T>
-    T vector<T>::Pop_back() {
+    T TVector<T>::Pop_back() {
         if (Data == 0) {
             return 0;
         }
@@ -72,19 +77,19 @@ namespace mystd{
     }
 
     template<class T>
-    unsigned int vector<T>::Size() {
+    unsigned int TVector<T>::Size() {
         return Capacity;
     }
 
     template<class T>
-    vector<T>::vector() {
+    TVector<T>::TVector() {
         Capacity = 0;
         Maxsize = 0;
         Data = 0;
     }
 
     template<class T>
-    vector<T>::vector(const unsigned int n) {
+    TVector<T>::TVector(const unsigned int n) {
         Capacity = n;
         Maxsize = n;
         Data = new T[Capacity];
@@ -92,7 +97,7 @@ namespace mystd{
     }
 
     template<class T>
-    vector<T>::vector(const unsigned int n, T elem) {
+    TVector<T>::TVector(const unsigned int n, T elem) {
         Capacity = n;
         Maxsize = n;
         Data = new T[Capacity];
@@ -100,7 +105,7 @@ namespace mystd{
     }
 
     template<class T>
-    vector<T>::~vector() {
+    TVector<T>::~TVector() {
         delete[] Data;
     }
 }
