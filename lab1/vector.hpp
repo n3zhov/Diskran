@@ -16,8 +16,8 @@ namespace NMystd{
         void Assign(unsigned int n, T elem);
         void Clear();
         T &operator[](const unsigned int &index);
-        void Push_back(T elem);
-        T Pop_back();
+        void PushBack(T elem);
+        T PopBack();
         unsigned int Size();
         TVector();
         TVector(unsigned int n);
@@ -48,32 +48,33 @@ namespace NMystd{
     }
 
     template<class T>
-    void TVector<T>::Push_back(T elem) {
+    void TVector<T>::PushBack(T elem) {
         if (Capacity == 0) {
             Maxsize = 1;
             Data = new T[Maxsize];
         }
         if (Capacity == Maxsize) {
             Maxsize = Maxsize * 2;
-            T* new_Data = new T[Maxsize];
+            T* newData = new T[Maxsize];
             for (int i = 0; i < Capacity; ++i) {
-                new_Data[i] = Data[i];
+                newData[i] = Data[i];
             }
-            Data = new_Data;
+            delete[] Data;
+            Data = newData;
         }
         Data[Capacity] = elem;
         Capacity++;
     }
 
     template<class T>
-    T TVector<T>::Pop_back() {
+    T TVector<T>::PopBack() {
         if (Data == 0) {
             return 0;
         }
-        T return_elem = Data[Capacity];
+        T returnElem = Data[Capacity];
         Capacity--;
         Data[Capacity] = 0;
-        return return_elem;
+        return returnElem;
     }
 
     template<class T>

@@ -5,36 +5,36 @@
 
 void CountingSort(NMystd::TVector<NMystd::TItem> &data) {
     for (int i = 0; i < 32; ++i){
-        NMystd::TVector<NMystd::TVector<NMystd::TItem>> buf(16, NMystd::TVector<NMystd::TItem>());
+        NMystd::TVector<NMystd::TVector<NMystd::TItem> > buf(16, NMystd::TVector<NMystd::TItem>());
         for (int m = 0; m < data.Size(); ++m){
             char c = data[m].key[31-i];
             if(c == 'a'){
-                buf[10].Push_back(data[m]);
+                buf[10].PushBack(data[m]);
             }
             else if(c == 'b'){
-                buf[11].Push_back(data[m]);
+                buf[11].PushBack(data[m]);
             }
             else if(c == 'c'){
-                buf[12].Push_back(data[m]);
+                buf[12].PushBack(data[m]);
             }
             else if(c == 'd'){
-                buf[13].Push_back(data[m]);
+                buf[13].PushBack(data[m]);
             }
             else if(c == 'e'){
-                buf[14].Push_back(data[m]);
+                buf[14].PushBack(data[m]);
             }
             else if(c == 'f'){
-                buf[15].Push_back(data[m]);
+                buf[15].PushBack(data[m]);
             }
             else{
                 int index = (int)c - '0';
-                buf[index].Push_back(data[m]);
+                buf[index].PushBack(data[m]);
             }
         }
         data.Clear();
         for (int m = 0; m < 16; ++m){
         	for (int j = 0; j < buf[m].Size(); ++j){
-                data.Push_back(buf[m][j]);
+                data.PushBack(buf[m][j]);
             }
         }
     }
@@ -47,7 +47,7 @@ int main() {
 	std::cout.tie(0); 
 	std::ios_base::sync_with_stdio(0);
 	while (std::cin >> cur.key >> cur.value) {
-		a.Push_back(cur);
+		a.PushBack(cur);
 	}
 	CountingSort(a);
 	for (int i = 0; i < a.Size(); i++) {
