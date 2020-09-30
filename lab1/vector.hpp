@@ -1,5 +1,6 @@
 #ifndef TVector_HPP
 #define TVector_HPP
+#include <cstdio>
 namespace NMystd{
     struct TItem{
         char key [33];
@@ -10,10 +11,11 @@ namespace NMystd{
     class TVector {
     private:
         unsigned int Capacity;
-        unsigned int Maxsize;
+        unsigned int MaxSize;
         T *Data;
     public:
         void Assign(unsigned int n, T elem);
+        void Assign(unsigned int n);
         void Clear();
         T &operator[](const unsigned int &index);
         void PushBack(T elem);
@@ -27,18 +29,27 @@ namespace NMystd{
     template<class T>
     void TVector<T>::Assign(const unsigned int n, T elem) {
         delete[] Data;
-        Maxsize = n*2;
-        Data = new T[Maxsize];
+        MaxSize = n*2;
+        Data = new T[MaxSize];
         Capacity = n;
         for (int i = 0; i < n; i++) {
             Data[i] = elem;
         }
     }
 
+    template<class T>
+    void TVector<T>::Assign(const unsigned int n) {
+        delete[] Data;
+        MaxSize = n*2;
+        Data = new T[MaxSize];
+        Capacity = 0;
+    }
+
+
     template <class T>
     void TVector<T>::Clear(){
         Capacity = 0;
-        Maxsize = 0;
+        MaxSize = 0;
         delete[] Data;
     }
 
@@ -49,13 +60,13 @@ namespace NMystd{
 
     template<class T>
     void TVector<T>::PushBack(T elem) {
-        if (Capacity == 0) {
-            Maxsize = 1;
-            Data = new T[Maxsize];
+        if (MaxSize == 0) {
+            MaxSize = 1;
+            Data = new T[MaxSize];
         }
-        if (Capacity == Maxsize) {
-            Maxsize = Maxsize * 2;
-            T* newData = new T[Maxsize];
+        if (Capacity == MaxSize) {
+            MaxSize = MaxSize * 2;
+            T* newData = new T[MaxSize];
             for (int i = 0; i < Capacity; ++i) {
                 newData[i] = Data[i];
             }
@@ -85,23 +96,17 @@ namespace NMystd{
     template<class T>
     TVector<T>::TVector() {
         Capacity = 0;
-        Maxsize = 0;
+        MaxSize = 0;
         Data = 0;
     }
 
     template<class T>
     TVector<T>::TVector(const unsigned int n) {
-        Capacity = n;
-        Maxsize = n;
-        Data = new T[Capacity];
-        assign(n, T());
+        Assign(n);
     }
 
     template<class T>
     TVector<T>::TVector(const unsigned int n, T elem) {
-        Capacity = n;
-        Maxsize = n;
-        Data = new T[Capacity];
         Assign(n, elem);
     }
 

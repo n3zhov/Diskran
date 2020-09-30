@@ -3,9 +3,9 @@ CXXFLAGS = -std=c++14 -O2 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-re
 FILES = main.cpp
 NAME = solution
 
-all: main
+all: main.o
 
-main:
+main.o:
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(FILES)
 
 clean:

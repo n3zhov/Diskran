@@ -1,11 +1,12 @@
 #include "vector.hpp"
 #include <cstdio>
-#include <iostream>
 
 
 void CountingSort(NMystd::TVector<NMystd::TItem> &data) {
     for (int i = 0; i < 32; ++i){
-        NMystd::TVector<NMystd::TVector<NMystd::TItem> > buf(16, NMystd::TVector<NMystd::TItem>());
+        NMystd::TVector<NMystd::TItem> buf[16];
+        for (int i = 0; i < 16; ++i)
+            buf[i].Assign(data.Size());
         for (int m = 0; m < data.Size(); ++m){
             char c = data[m].key[31-i];
             if(c == 'a'){
@@ -43,15 +44,12 @@ void CountingSort(NMystd::TVector<NMystd::TItem> &data) {
 int main() {
 	NMystd::TVector<NMystd::TItem> a;
 	NMystd::TItem cur;
-	std::cin.tie(0); 
-	std::cout.tie(0); 
-	std::ios_base::sync_with_stdio(0);
-	while (std::cin >> cur.key >> cur.value) {
+	while (scanf("%s%s", cur.key, cur.value) > 0) {
 		a.PushBack(cur);
 	}
 	CountingSort(a);
 	for (int i = 0; i < a.Size(); i++) {
-		std::cout << a[i].key << ' ' << a[i].value << '\n';
+		printf("%s %s\n", a[i].key, a[i].value);
 	}
 	return 0;
 }
