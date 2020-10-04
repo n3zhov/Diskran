@@ -2,120 +2,102 @@
 #define TVector_HPP
 #include <cstdio>
 #include <cstring>
+const long long KEY_SIZE = 8;
 namespace NMyStd{
     struct TItem{
-        char key [33];
-        char **value;
+        int Key[8];
+        char **Value;
     };
 
-    template<class T>
-    class TVector {
+    template <class T>
+    class TVector{
     private:
-        unsigned int Capacity;
-        unsigned int MaxSize;
-        T *Data;
+        long long TVectorSize;
+        long long TVectorCapacity;
+        T* Data;
     public:
-        void Assign(unsigned int n, T elem);
-        void Assign(unsigned int n);
-        void Clear();
-        T &operator[](const unsigned int &index);
-        void PushBack(T elem);
-        T& PopBack();
-        unsigned int Size();
+        void Assign(const T elem);
+        void Assign(const long long n, const T elem);
         TVector();
-        TVector(unsigned int n);
-        TVector(unsigned int n, T elem);
+        TVector(const long long n);
+        TVector(const long long n, T elem);
+        long long Size();
+        void PushBack(const T &elem);
+        void Pop();
+        bool Empty();
+        T& operator[] (const long long iterator);
         ~TVector();
     };
-    template<class T>
-    void TVector<T>::Assign(const unsigned int n, T elem) {
-        if (Data == NULL){
-            delete[] Data;
-        }
-        MaxSize = n*2;
-        Data = new T[MaxSize];
-        Capacity = n;
-        for (int i = 0; i < n; i++) {
+    template <class T>
+    void TVector<T>::Assign(const T elem){
+        for (long long i = 0; i < TVectorSize; ++i){
             Data[i] = elem;
         }
     }
 
-    template<class T>
-    void TVector<T>::Assign(const unsigned int n) {
-        if (Data == NULL){
-            delete[] Data;
-        }
-        MaxSize = n*2;
-        Data = new T[MaxSize];
-        Capacity = 0;
-    }
-
-
     template <class T>
-    void TVector<T>::Clear(){
-        Capacity = 0;
-        MaxSize = 0;
-        delete[] Data;
-    }
-
-    template<class T>
-    T& TVector<T>::operator[](const unsigned int &index) {
-        return Data[index];
-    }
-
-    template<class T>
-    void TVector<T>::PushBack(T elem) {
-        if (MaxSize == 0) {
-            MaxSize = 1;
-            Data = new T[MaxSize];
+    void TVector<T>::Assign(const long long n, const T elem){
+        for (long long i = 0; i < n; ++i){
+            Data[i] = elem;
         }
-        if (Capacity == MaxSize) {
-            MaxSize = MaxSize * 2;
-            T* newData = new T[MaxSize];
-            memcpy(newData, Data, sizeof(T)*Capacity);
-            delete[] Data;
+    }
+    template <class T>
+    TVector<T>::TVector(){
+        TVectorSize = 0;
+        TVectorCapacity = 0;
+        Data = nullptr;
+    }
+    template <class T>
+    TVector<T>::TVector(const long long n){
+        TVectorSize = n;
+        TVectorCapacity = n;
+        Data = new T[TVectorCapacity];
+        Assign(n, T());
+    }
+    template <class T>
+    TVector<T>::TVector(const long long n, T elem):TVector(n){
+        Assign(elem);
+    }
+    template <class T>
+    long long TVector<T>::Size(){
+        return TVectorSize;
+    }
+    template <class T>
+    void TVector<T>::PushBack(const T &elem){
+        if (TVectorCapacity == 0){
+            TVectorCapacity = 1;
+            TVectorSize = 0;
+            Data = new T[TVectorCapacity];
+        }
+        else if (TVectorCapacity == TVectorSize){
+            TVectorCapacity *= 2;
+            T* newData = new T[TVectorCapacity];
+            for (long long i = 0; i < TVectorSize; ++i){
+                newData[i] = Data[i];
+            }
+            delete [] Data;
             Data = newData;
         }
-        Data[Capacity] = elem;
-        Capacity++;
+        TVectorSize += 1;
+        Data[TVectorSize - 1] = elem;
     }
-
-    template<class T>
-    T& TVector<T>::PopBack() {
-        if (Data == 0) {
-            return 0;
-        }
-        T returnElem = Data[Capacity];
-        Capacity--;
-        Data[Capacity] = 0;
-        return returnElem;
+    template <class T>
+    void TVector<T>::Pop(){
+        TVectorSize = 0;
+        TVectorCapacity = 0;
+        delete [] Data;
     }
-
-    template<class T>
-    unsigned int TVector<T>::Size() {
-        return Capacity;
+    template <class T>
+    bool TVector<T>::Empty(){
+        return TVectorSize == 0;
     }
-
-    template<class T>
-    TVector<T>::TVector() {
-        Capacity = 0;
-        MaxSize = 0;
-        Data = 0;
+    template <class T>
+    T& TVector<T>::operator[] (const long long iterator){
+        return Data[iterator];
     }
-
-    template<class T>
-    TVector<T>::TVector(const unsigned int n) {
-        Assign(n);
-    }
-
-    template<class T>
-    TVector<T>::TVector(const unsigned int n, T elem) {
-        Assign(n, elem);
-    }
-
-    template<class T>
-    TVector<T>::~TVector() {
-        delete[] Data;
+    template <class T>
+    TVector<T>::~TVector(){
+        delete [] Data;
     }
 }
 #endif
