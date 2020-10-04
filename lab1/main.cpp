@@ -25,15 +25,13 @@ void CountingSort(NMyStd::TVector<NMyStd::TItem> &data, int bit) {
         result[countArray[data[i].Key[bit]] - 1] = data[i];
         --countArray[data[i].Key[bit]];
     }
-    for (int i = 0; i < size; ++i){
-        std::cout << *result[i].Value << ' ';
-    }
     for (long long i = 0; i < size; ++i){
         for (int j = 0; j < KEY_SIZE; ++j){
             data[i].Key[j] = result[i].Key[j];
         }
         data[i].Value = result[i].Value;
     }
+    delete [] result;
 }
 
 void BitwiseSort(NMyStd::TVector<NMyStd::TItem> &data){
@@ -50,8 +48,10 @@ int main() {
     char strKey [STR_KEY_SIZE];
     NMyStd::TItem cur;
     cur.Value = nullptr;
+
     char bufInput [VALUE_SIZE];
     NMyStd::TVector<char*> ValueData;
+
     while (std::cin >> strKey >> bufInput) {
         for (int & i : cur.Key){
             i = 0;
@@ -82,6 +82,9 @@ int main() {
             std::cout << std::hex << std::setw(4) << std::setfill('0') << data[i].Key[j];
         }
         std::cout << " " << *data[i].Value << "\n";
+    }
+    for (int i = 0; i < ValueData.Size(); ++i){
+        delete[] ValueData[i];
     }
     return 0;
 }
