@@ -1,10 +1,11 @@
 #ifndef TVector_HPP
 #define TVector_HPP
 #include <cstdio>
-namespace NMystd{
+#include <cstring>
+namespace NMyStd{
     struct TItem{
         char key [33];
-        char value [2049];
+        char **value;
     };
 
     template<class T>
@@ -19,7 +20,7 @@ namespace NMystd{
         void Clear();
         T &operator[](const unsigned int &index);
         void PushBack(T elem);
-        T PopBack();
+        T& PopBack();
         unsigned int Size();
         TVector();
         TVector(unsigned int n);
@@ -28,7 +29,9 @@ namespace NMystd{
     };
     template<class T>
     void TVector<T>::Assign(const unsigned int n, T elem) {
-        delete[] Data;
+        if (Data == NULL){
+            delete[] Data;
+        }
         MaxSize = n*2;
         Data = new T[MaxSize];
         Capacity = n;
@@ -39,7 +42,9 @@ namespace NMystd{
 
     template<class T>
     void TVector<T>::Assign(const unsigned int n) {
-        delete[] Data;
+        if (Data == NULL){
+            delete[] Data;
+        }
         MaxSize = n*2;
         Data = new T[MaxSize];
         Capacity = 0;
@@ -67,9 +72,7 @@ namespace NMystd{
         if (Capacity == MaxSize) {
             MaxSize = MaxSize * 2;
             T* newData = new T[MaxSize];
-            for (int i = 0; i < Capacity; ++i) {
-                newData[i] = Data[i];
-            }
+            memcpy(newData, Data, sizeof(T)*Capacity);
             delete[] Data;
             Data = newData;
         }
@@ -78,7 +81,7 @@ namespace NMystd{
     }
 
     template<class T>
-    T TVector<T>::PopBack() {
+    T& TVector<T>::PopBack() {
         if (Data == 0) {
             return 0;
         }

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++14 -O2 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic
+CXXFLAGS = -std=c++14 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic
 FILES = main.cpp
 NAME = solution
 
@@ -10,3 +10,4 @@ main.o:
 
 clean:
 	rm -f *.o $(NAME)
+

@@ -1,55 +1,67 @@
 #include "vector.hpp"
 #include <cstdio>
+const int MAX_KEY = 16;
+void CountingSort(NMyStd::TVector<NMyStd::TItem> &data, int bit) {
+    NMyStd::TVector<int> count(MAX_KEY, 0);
+    int size = (int)data.Size();
+    for (int i = 0; i < size; ++i) {
+        char c = data[i].key[31-bit];
+        int bitValue;
+        int digitSummand = 10;
+        if (c >= 'a' && c <= 'z') {
+            bitValue = digitSummand + c - 'a';
+        }
+        else{
+            bitValue = c - '0';
+        }
+        count[bitValue]++;
+    }
 
+    for (int i = 1; i < MAX_KEY; ++i) {
+        count[i] = count[i] + count[i - 1];
+    }
 
-void CountingSort(NMystd::TVector<NMystd::TItem> &data) {
+    NMyStd::TVector<NMyStd::TItem> res(data.Size());
+    for (int i = size - 1; i >= 0; --i) {
+        char c = data[i].key[31-bit];
+        int bitValue;
+        int digitSummand = 10;
+        if (c >= 'a' && c <= 'z') {
+            bitValue = digitSummand + c - 'a';
+        }
+        else{
+            bitValue = c - '0';
+        }
+        res[count[bitValue] - 1] =  data[i];
+        count[bitValue]--;
+    }
+    for (int i = 0; i < size; ++i) {
+        data[i] = res[i];
+    }
+}
+
+void BitwiseSort(NMyStd::TVector<NMyStd::TItem> &data){
     for (int i = 0; i < 32; ++i){
-        NMystd::TVector<NMystd::TItem> buf[16];
-        for (int i = 0; i < 16; ++i)
-            buf[i].Assign(data.Size());
-        for (int m = 0; m < data.Size(); ++m){
-            char c = data[m].key[31-i];
-            if(c == 'a'){
-                buf[10].PushBack(data[m]);
-            }
-            else if(c == 'b'){
-                buf[11].PushBack(data[m]);
-            }
-            else if(c == 'c'){
-                buf[12].PushBack(data[m]);
-            }
-            else if(c == 'd'){
-                buf[13].PushBack(data[m]);
-            }
-            else if(c == 'e'){
-                buf[14].PushBack(data[m]);
-            }
-            else if(c == 'f'){
-                buf[15].PushBack(data[m]);
-            }
-            else{
-                int index = (int)c - '0';
-                buf[index].PushBack(data[m]);
-            }
-        }
-        data.Clear();
-        for (int m = 0; m < 16; ++m){
-        	for (int j = 0; j < buf[m].Size(); ++j){
-                data.PushBack(buf[m][j]);
-            }
-        }
+        CountingSort(data, i);
     }
 }
 
 int main() {
-	NMystd::TVector<NMystd::TItem> a;
-	NMystd::TItem cur;
-	while (scanf("%s%s", cur.key, cur.value) > 0) {
-		a.PushBack(cur);
-	}
-	CountingSort(a);
-	for (int i = 0; i < a.Size(); i++) {
-		printf("%s %s\n", a[i].key, a[i].value);
-	}
-	return 0;
+    NMyStd::TVector<NMyStd::TItem> a;
+    NMyStd::TItem cur;
+    char *bufInput = new char[2049];
+    NMyStd::TVector<char*> ValueData;
+    while (scanf("%s%s", cur.key, bufInput) > 0) {
+        a.PushBack(cur);
+        ValueData.PushBack(bufInput);
+    }
+    for (int i = 0; i < ValueData.Size(); ++i){
+        a[i].value = &(ValueData[i]);
+    }
+    BitwiseSort(a);
+    for (int i = 0; i < a.Size(); i++) {
+        printf("%s %s\n", a[i].key, *a[i].value);
+    }
+    delete [] bufInput;
+    return 0;
 }
