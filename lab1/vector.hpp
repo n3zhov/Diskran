@@ -5,7 +5,7 @@
 const long long KEY_SIZE = 8;
 namespace NMyStd{
     struct TItem{
-        int Key[8];
+        int Key[KEY_SIZE];
         char **Value;
     };
 
