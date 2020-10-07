@@ -50,10 +50,7 @@ void CountingSort(NMyStd::TVector<NMyStd::TItem> &data, int bit) {
         --countArray[data[i].Key[bit]];
     }
     for (long long i = 0; i < size; ++i){
-        for (int j = 0; j < KEY_SIZE; ++j){
-            data[i].Key[j] = result[i].Key[j];
-        }
-        data[i].Value = result[i].Value;
+        data[i] = result[i];
     }
     delete [] result;
 }
@@ -77,6 +74,7 @@ int main() {
 
     char bufInput [VALUE_SIZE];
     NMyStd::TVector<char*> valueData;
+    auto start = std::chrono::steady_clock::now();
     while (std::cin >> strKey >> bufInput) {
         for (int & i : cur.Key){
             i = ZERO;
@@ -103,10 +101,14 @@ int main() {
         data[i].Value = &valueData[i];
         benchmarkData[i].Value = &valueData[i];
     }
-    auto start = std::chrono::steady_clock::now();
-    BitwiseSort(data);
     auto finish = std::chrono::steady_clock::now();
     auto dur = finish - start;
+    std::cerr << "input time" << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
+    
+    start = std::chrono::steady_clock::now();
+    BitwiseSort(data);
+    finish = std::chrono::steady_clock::now();
+    dur = finish - start;
     std::cerr << "custom bitwise sort " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
 
     start = std::chrono::steady_clock::now();
@@ -115,12 +117,17 @@ int main() {
     dur = finish - start;
     std::cerr << "stable sort from std " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
 
+    start = std::chrono::steady_clock::now();
     for (int i = 0; i < data.Size(); ++i) {
         for (int j = 0; j < KEY_SIZE; ++j){
             std::cout << std::hex << std::setw(HEX_PRECISION) << std::setfill(ZERO_CHAR) << benchmarkData[i].Key[j];
         }
         std::cout << " " << *benchmarkData[i].Value << "\n";
     }
+    finish = std::chrono::steady_clock::now();
+    dur = finish - start;
+    std::cerr << "output time" << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
+    
     for (int i = 0; i < valueData.Size(); ++i){
         delete[] valueData[i];
     }
