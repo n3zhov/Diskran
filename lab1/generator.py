@@ -12,7 +12,7 @@ def randhex(size):
 
 def randvalue():
     result = ""
-    size = random.randint(1, 2048)
+    size = random.randint(1, 70)
     for i in range(size):
         result += random.choice(string.ascii_letters)
     return result

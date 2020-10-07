@@ -19,31 +19,25 @@ const char NINE_CHAR = '9';
 void CountingSort(NMyStd::TVector<NMyStd::TItem> &data, int bit) {
     NMyStd::TVector<long long> countArray(MAX_KEY + ONE, ZERO);
     long long size = data.Size();
-    for (unsigned int i = 0; i <= MAX_KEY; ++i){
-        countArray[i] = ZERO;
+    for (long long i = 0; i < size; ++i) {
+        ++countArray[data[i].Key[bit]];
     }
-    for (long long i = 0; i < size; ++i){
-        countArray[data[i].Key[bit]] += ONE;
-    }
-    for (unsigned int i = 1; i <= MAX_KEY; ++i){
+    for (unsigned int i = 1; i <= MAX_KEY; ++i) {
         countArray[i] += countArray[i - ONE];
     }
     NMyStd::TItem *result = new NMyStd::TItem[size];
-    for (long long i = size - ONE; i >= 0; --i){
+    for (long long i = size - ONE; i >= 0; --i) {
         result[countArray[data[i].Key[bit]] - ONE] = data[i];
         --countArray[data[i].Key[bit]];
     }
-    for (long long i = 0; i < size; ++i){
-        for (int j = 0; j < KEY_SIZE; ++j){
-            data[i].Key[j] = result[i].Key[j];
-        }
-        data[i].Value = result[i].Value;
+    for (long long i = 0; i < size; ++i) {
+        data[i] = result[i];
     }
     delete [] result;
 }
 
-void BitwiseSort(NMyStd::TVector<NMyStd::TItem> &data){
-    for (int i = KEY_SIZE - ONE; i >= 0; --i){
+void BitwiseSort(NMyStd::TVector<NMyStd::TItem> &data) {
+    for (int i = KEY_SIZE - ONE; i >= 0; --i) {
         CountingSort(data, i);
     }
 }
@@ -61,16 +55,16 @@ int main() {
     NMyStd::TVector<char*> valueData;
 
     while (std::cin >> strKey >> bufInput) {
-        for (int & i : cur.Key){
+        for (int & i : cur.Key) {
             i = ZERO;
         }
-        for (int i = KEY_SIZE - ONE; i >= 0; --i){
+        for (int i = KEY_SIZE - ONE; i >= 0; --i) {
             int hexMultiply = ONE;
-            for (int j = KEY_BIT_SIZE - ONE; j >= 0; --j){
-                if (strKey[i * KEY_BIT_SIZE + j] >= ZERO_CHAR && strKey[i * KEY_BIT_SIZE + j] <= NINE_CHAR){
+            for (int j = KEY_BIT_SIZE - ONE; j >= 0; --j) {
+                if (strKey[i * KEY_BIT_SIZE + j] >= ZERO_CHAR && strKey[i * KEY_BIT_SIZE + j] <= NINE_CHAR) {
                     cur.Key[i] += (strKey[i * KEY_BIT_SIZE + j] - ZERO_CHAR) * hexMultiply;
                 }
-                else if (strKey[i * KEY_BIT_SIZE + j] >= A_CHAR && strKey[i * KEY_BIT_SIZE + j] <= F_CHAR){
+                else if (strKey[i * KEY_BIT_SIZE + j] >= A_CHAR && strKey[i * KEY_BIT_SIZE + j] <= F_CHAR) {
                     cur.Key[i] += (strKey[i * KEY_BIT_SIZE + j] - A_CHAR + 10) * hexMultiply;
                 }
                 hexMultiply *= HEX_MULTIPLY;
@@ -81,17 +75,17 @@ int main() {
         data.PushBack(cur);
         valueData.PushBack(curValue);
     }
-    for (int i = 0; i < valueData.Size(); ++i){
+    for (int i = 0; i < valueData.Size(); ++i) {
         data[i].Value = &valueData[i];
     }
     BitwiseSort(data);
     for (int i = 0; i < data.Size(); ++i) {
-        for (int j = 0; j < KEY_SIZE; ++j){
+        for (int j = 0; j < KEY_SIZE; ++j) {
             std::cout << std::hex << std::setw(HEX_PRECISION) << std::setfill(ZERO_CHAR) << data[i].Key[j];
         }
         std::cout << " " << *data[i].Value << "\n";
     }
-    for (int i = 0; i < valueData.Size(); ++i){
+    for (int i = 0; i < valueData.Size(); ++i) {
         delete[] valueData[i];
     }
     return 0;

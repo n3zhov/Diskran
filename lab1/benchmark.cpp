@@ -20,26 +20,20 @@ const char A_CHAR = 'a';
 const char F_CHAR = 'f';
 const char NINE_CHAR = '9';
 
-bool compare(NMyStd::TItem const& lhs, NMyStd::TItem const& rhs){
-    for (int i = 0; i < KEY_SIZE; ++i){
-        if(lhs.Key[i] < rhs.Key[i]){
-            return true;
-        }
-        else if(lhs.Key[i] > rhs.Key[i]){
-            return false;
-        }
-    }
-    return false;
+struct itemStd{
+    std::string Key;
+    char **Value;
+};
+
+bool operator<(const itemStd &lhs, const itemStd &rhs) {
+    return lhs.Key < rhs.Key;
 }
 
 void CountingSort(NMyStd::TVector<NMyStd::TItem> &data, int bit) {
     NMyStd::TVector<long long> countArray(MAX_KEY + ONE, ZERO);
     long long size = data.Size();
-    for (unsigned int i = 0; i <= MAX_KEY; ++i){
-        countArray[i] = ZERO;
-    }
     for (long long i = 0; i < size; ++i){
-        countArray[data[i].Key[bit]] += ONE;
+        ++countArray[data[i].Key[bit]];
     }
     for (unsigned int i = 1; i <= MAX_KEY; ++i){
         countArray[i] += countArray[i - ONE];
@@ -66,7 +60,7 @@ int main() {
     std::cout.tie(nullptr);
     std::ios_base::sync_with_stdio(false);
     NMyStd::TVector<NMyStd::TItem> data;
-    std::vector<NMyStd::TItem> benchmarkData;
+    std::vector<itemStd> benchmarkData;
 
     char strKey [STR_KEY_SIZE];
     NMyStd::TItem cur;
@@ -74,7 +68,7 @@ int main() {
 
     char bufInput [VALUE_SIZE];
     NMyStd::TVector<char*> valueData;
-    auto start = std::chrono::steady_clock::now();
+    itemStd buf;
     while (std::cin >> strKey >> bufInput) {
         for (int & i : cur.Key){
             i = ZERO;
@@ -94,39 +88,34 @@ int main() {
         char *curValue = new char[VALUE_SIZE];
         std::memcpy(curValue, bufInput, sizeof(char)*VALUE_SIZE);
         data.PushBack(cur);
-        benchmarkData.push_back(cur);
+        buf.Key = strKey;
+        benchmarkData.push_back(buf);
         valueData.PushBack(curValue);
     }
     for (int i = 0; i < valueData.Size(); ++i){
         data[i].Value = &valueData[i];
         benchmarkData[i].Value = &valueData[i];
     }
+    
+    auto start = std::chrono::steady_clock::now();
+    BitwiseSort(data);
     auto finish = std::chrono::steady_clock::now();
     auto dur = finish - start;
-    std::cerr << "input time " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
-    
-    start = std::chrono::steady_clock::now();
-    BitwiseSort(data);
-    finish = std::chrono::steady_clock::now();
-    dur = finish - start;
     std::cerr << "custom bitwise sort " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
 
     start = std::chrono::steady_clock::now();
-    sort(benchmarkData.begin(), benchmarkData.end(), compare);
+    stable_sort(benchmarkData.begin(), benchmarkData.end());
     finish = std::chrono::steady_clock::now();
     dur = finish - start;
     std::cerr << "stable sort from std " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
 
-    start = std::chrono::steady_clock::now();
     for (int i = 0; i < data.Size(); ++i) {
         for (int j = 0; j < KEY_SIZE; ++j){
             std::cout << std::hex << std::setw(HEX_PRECISION) << std::setfill(ZERO_CHAR) << benchmarkData[i].Key[j];
         }
         std::cout << " " << *benchmarkData[i].Value << "\n";
     }
-    finish = std::chrono::steady_clock::now();
     dur = finish - start;
-    std::cerr << "output time " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
     
     for (int i = 0; i < valueData.Size(); ++i){
         delete[] valueData[i];
