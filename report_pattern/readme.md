@@ -6,4 +6,4 @@
 
 ## Сама команда
 
-`sudo apt-get install texlive-latex-base context texlive-latex-base texlive-lang-cyrillic texlive-latex-extra`
+`sudo apt-get install texlive-latex-base context texlive-latex-base texlive-lang-cyrillic texlive-latex-extra latexmk`
