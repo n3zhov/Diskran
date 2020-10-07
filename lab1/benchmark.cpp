@@ -103,7 +103,7 @@ int main() {
     }
     auto finish = std::chrono::steady_clock::now();
     auto dur = finish - start;
-    std::cerr << "input time" << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
+    std::cerr << "input time " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
     
     start = std::chrono::steady_clock::now();
     BitwiseSort(data);
@@ -126,7 +126,7 @@ int main() {
     }
     finish = std::chrono::steady_clock::now();
     dur = finish - start;
-    std::cerr << "output time" << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
+    std::cerr << "output time " << std::chrono::duration_cast<std::chrono::milliseconds>(dur).count() << " ms" << std::endl;
     
     for (int i = 0; i < valueData.Size(); ++i){
         delete[] valueData[i];
