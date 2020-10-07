@@ -8,6 +8,12 @@ all: main.o
 main.o:
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(FILES)
 
+benchmark: benchmark.o
+	$(CXX) $(CXXFLAGS) benchmark.o -o $@
+
+benchmark.o: benchmark.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
 	rm -f *.o $(NAME)
 
