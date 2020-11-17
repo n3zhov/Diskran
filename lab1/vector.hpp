@@ -73,9 +73,7 @@ namespace NMyStd{
         else if (TVectorCapacity == TVectorSize){
             TVectorCapacity *= 2;
             T* newData = new T[TVectorCapacity];
-            for (long long i = 0; i < TVectorSize; ++i){
-                newData[i] = Data[i];
-            }
+            std::memcpy(newData, Data, sizeof(T)*TVectorSize);
             delete [] Data;
             Data = newData;
         }
