@@ -19,7 +19,7 @@ function log_()
 
 function main() {
   local bin=solution
-
+  test_generate_flag=$1
   log_info "Stage #1 Compiling..."
   if ! (make clean && make) ; then
     echo "ERROR: Failed to compile file."
@@ -28,14 +28,20 @@ function main() {
 
   log_info "Stage #2 Test generating..."
   local test_dir=tests
-  rm -rf ${test_dir}
-  mkdir -p ${test_dir}
-  if ! (python3 generator.py) ; then
-    echo "ERROR: Failed to python generate tests."
-    exit 1
+  # shellcheck disable=SC2004
+  if (($test_generate_flag == 1)) ; then
+    rm -rf ${test_dir}
+    mkdir -p ${test_dir}
+    if ! (python3 generator.py) ; then
+      echo "ERROR: Failed to python generate tests."
+      exit 1
+    fi
+  else
+    echo "Skip test generating"
   fi
 
   log_info "Stage #3 Checking..."
+  # shellcheck disable=SC2045
   for test_file in $(ls ${test_dir}/*.t); do
     echo "Execute ${test_file}"
     local tmp_output=${test_dir}/tmp
@@ -60,6 +66,7 @@ function main() {
     return 1
   fi
   local benchmark_bin=./benchmark
+  # shellcheck disable=SC2045
   for test_file in $( ls ${test_dir}/*.t ) ; do
     count_of_lines=$(wc -l < ${test_file})
     log_info "Running ${test_file}" 
@@ -70,8 +77,8 @@ function main() {
     fi
   done
 
-  rm -rf ${test_dir}
   make clean
 }
 
+# shellcheck disable=SC2068
 main $@
