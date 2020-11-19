@@ -6,7 +6,7 @@
 #include "tree.hpp"
 
 struct cmpStr {
-    bool operator()(const char* lhs, const char* rhs){
+    bool operator()(const char* lhs, const char* rhs) const{
         if (strcmp(lhs, rhs) < 0) {
             return true;
         } else {
