@@ -5,10 +5,20 @@
 #include "item.hpp"
 #include "tree.hpp"
 
+struct cmpStr {
+    bool operator()(const char* lhs, const char* rhs) const {
+        if (strcmp(lhs, rhs) < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
+
 int main(){
     using duration_t = std::chrono::microseconds;
     char readStr[MAX_LEN+1];
-    std::map<char*, unsigned long long> mapTree;
+    std::map<char*, unsigned long long, cmpStr> mapTree;
     NMyStd::TRBTree* rbTree = new NMyStd::TRBTree;
     std::chrono::time_point<std::chrono::system_clock> start, end;
     unsigned long long  mapTsInsert = 0, mapTsDelete = 0, mapTsSearch = 0;
