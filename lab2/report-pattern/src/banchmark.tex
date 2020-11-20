@@ -1,0 +1,23 @@
+\section{Тест производительности}
+Время на ввод и посторение структур данных не учитывается, замеряется только время, затраченное на сортировку. Количество пар \enquote{ключ-значение} для каждого файла равно десять в степени номер теста минус один. Например, $02.t$ содержит десять пар, а $07.t$ миллион.
+
+\begin{alltt}
+(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/04.t > 04.a
+custom bitwise sort 6 ms
+stable sort from std 0 ms
+(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/05.t > 05.a
+custom bitwise sort 9 ms
+stable sort from std 6 ms
+(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/06.t > 06.a
+custom bitwise sort 37 ms
+stable sort from std 168 ms
+(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/07.t > 07.a
+custom bitwise sort 478 ms
+stable sort from std 2371 ms
+    
+\end{alltt}
+
+Глядя на результаты, видно, что $std::stable\_sort$ выигрывает больше всего на самых маленьких тестах, а $BitWise sort$ на самых больших. Сложность $std::stable\_sort$ $O(n * log\ n)$, а сложность $Radix sort$ $O(m * n)$, где $m$ - количество разрядов в числе. Так как логарифм возрастающая функция, переломный момент наступает, когда $log\ n$ становится больше, чем постоянная $m$.
+
+\pagebreak
+
