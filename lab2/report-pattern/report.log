@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.21)  21 NOV 2020 16:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.21)  22 NOV 2020 18:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -629,7 +629,7 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 LaTeX Warning: Unused global option(s):
     [pdf].
 
-(./report.aux)
+No file report.aux.
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
@@ -654,7 +654,7 @@ LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
 LaTeX Font Info:    ... okay on input line 30.
 \AtBeginShipoutBox=\box56
 Package hyperref Info: Link coloring OFF on input line 30.
- (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 
 (/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
@@ -726,6 +726,10 @@ s been already used, duplicate ignored
                    \relax 
 l.34 \input
            {src/src} [1] (./src/src.tex
+
+LaTeX Warning: Citation `Kormen' on page 2 undefined on input line 3.
+
+
 Overfull \hbox (1.74658pt too wide) in paragraph at lines 2--22
 \T2B/cmr/m/n/12 “ребуетс€ на-пи-сать ре-а-ли-за-цию струк-ту-ры дан-ных "красно
 -чЉрное де-ре-воЁ(RB tree).
@@ -743,43 +747,43 @@ File: lstlang1.sty 2019/09/10 1.8c listings language file
 LaTeX Font Info:    Font shape `T2B/cmtt/bx/n' in size <10> not available
 (Font)              Font shape `T2B/cmtt/m/n' tried instead on input line 32.
  [3] [4]
-[5] [6]
-Overfull \hbox (106.54373pt too wide) in paragraph at lines 156--156
+[5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+Overfull \hbox (106.54373pt too wide) in paragraph at lines 709--709
 []\T2B/cmtt/m/n/12 caf836a9f342e48deb43e8215b23b177 FbGyVbPqdyvlQoJoqmvdiaCboIk
 NOILfldOAPtjxbzoVUxFKSOvppxRCtf[] 
  []
 
 
-Overfull \hbox (26.28833pt too wide) in paragraph at lines 159--159
+Overfull \hbox (26.28833pt too wide) in paragraph at lines 712--712
 []\T2B/cmtt/m/n/12 c41d2af1b376b9fc1f95fce356012712 SYhTAeNdhtZlTAWOreQeMNPaGgF
 SYNRMpoldNrUDsEAIR[] 
  []
 
 
-Overfull \hbox (1.59436pt too wide) in paragraph at lines 160--160
+Overfull \hbox (1.59436pt too wide) in paragraph at lines 713--713
 []\T2B/cmtt/m/n/12 8a18a352c07e3af6411007385bffd0ed ibdyiGQrGFQbLZngBwpsNoMiUrI
 GvkQwHwYGwVSWZ[] 
  []
 
 
-Overfull \hbox (1.59436pt too wide) in paragraph at lines 166--166
+Overfull \hbox (1.59436pt too wide) in paragraph at lines 719--719
 []\T2B/cmtt/m/n/12 8a18a352c07e3af6411007385bffd0ed ibdyiGQrGFQbLZngBwpsNoMiUrI
 GvkQwHwYGwVSWZ[] 
  []
 
 
-Overfull \hbox (26.28833pt too wide) in paragraph at lines 168--168
+Overfull \hbox (26.28833pt too wide) in paragraph at lines 721--721
 []\T2B/cmtt/m/n/12 c41d2af1b376b9fc1f95fce356012712 SYhTAeNdhtZlTAWOreQeMNPaGgF
 SYNRMpoldNrUDsEAIR[] 
  []
 
 
-Overfull \hbox (106.54373pt too wide) in paragraph at lines 169--169
+Overfull \hbox (106.54373pt too wide) in paragraph at lines 722--722
 []\T2B/cmtt/m/n/12 caf836a9f342e48deb43e8215b23b177 FbGyVbPqdyvlQoJoqmvdiaCboIk
 NOILfldOAPtjxbzoVUxFKSOvppxRCtf[] 
  []
 
-[7]) (./src/banchmark.tex
+[18]) (./src/banchmark.tex
 Overfull \hbox (1.59436pt too wide) in paragraph at lines 5--5
 []\T2B/cmtt/m/n/12 (base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark <te
 sts/04.t >04.a[] 
@@ -803,13 +807,13 @@ Overfull \hbox (1.59436pt too wide) in paragraph at lines 14--14
 sts/07.t >07.a[] 
  []
 
-[8]) (./src/thinks.tex) (./src/literature.tex [9]
+[19]) (./src/thinks.tex) (./src/literature.tex [20]
 Underfull \hbox (badness 10000) in paragraph at lines 4--5
 \T2B/cmr/m/n/12 URL: \T2B/cmtt/m/n/12 https://neerc.ifmo.ru/wiki/index.php?titl
 e= расно-черное_дерево
  []
 
-) [10]
+) [21]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 39.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 39.
  (./report.aux)
@@ -817,13 +821,20 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 39.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 39.
 Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: 5990932239A137F126BA32BBEBE763B8;663.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 39.
  ) 
 Here is how much of TeX's memory you used:
- 14430 strings out of 482657
- 200961 string characters out of 5957837
- 803012 words of memory out of 5000000
- 29114 multiletter control sequences out of 15000+600000
+ 15084 strings out of 482657
+ 210751 string characters out of 5957837
+ 805012 words of memory out of 5000000
+ 29223 multiletter control sequences out of 15000+600000
  544723 words of font info for 54 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  42i,7n,62p,1623b,1961s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -842,10 +853,10 @@ r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-
 dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on report.pdf (11 pages, 223399 bytes).
+Output written on report.pdf (22 pages, 265112 bytes).
 PDF statistics:
- 742 PDF objects out of 1000 (max. 8388607)
- 234 compressed objects within 3 object streams
- 111 named destinations out of 1000 (max. 500000)
+ 1456 PDF objects out of 1728 (max. 8388607)
+ 914 compressed objects within 10 object streams
+ 658 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
