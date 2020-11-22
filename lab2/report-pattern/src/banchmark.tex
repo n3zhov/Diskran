@@ -1,23 +1,32 @@
 \section{Тест производительности}
-Время на ввод и посторение структур данных не учитывается, замеряется только время, затраченное на сортировку. Количество пар \enquote{ключ-значение} для каждого файла равно десять в степени номер теста минус один. Например, $02.t$ содержит десять пар, а $07.t$ миллион.
+Время на ввод данных не учитывается, замеряется только время, затраченное на операции классов std::map и TRBTree. Количество комманд для каждого файла равно десять в степени номер теста. Например, $02.t$ содержит сто пар, а $06.t$ миллион.
 
 \begin{alltt}
-(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/04.t > 04.a
-custom bitwise sort 6 ms
-stable sort from std 0 ms
-(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/05.t > 05.a
-custom bitwise sort 9 ms
-stable sort from std 6 ms
-(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/06.t > 06.a
-custom bitwise sort 37 ms
-stable sort from std 168 ms
-(base) nikita@nikita-desktop:~/Diskran/lab1$ ./benchmark < tests/07.t > 07.a
-custom bitwise sort 478 ms
-stable sort from std 2371 ms
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ ./benchmark < tests/03.t
+==============START============
+INSERT std::map time: 4 ms
+INSERT rb tree time: 444 ms
+===============================
+DELETE std::map time: 5 ms
+DELETE rb tree time: 65 ms
+===============================
+SEARCH std::map time: 0 ms
+SEARCH rb tree time: 8 ms
+==============END==============
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ ./benchmark < tests/05.t
+==============START============
+INSERT std::map time: 412 ms
+INSERT rb tree time: 33463 ms
+===============================
+DELETE std::map time: 471 ms
+DELETE rb tree time: 11843 ms
+===============================
+SEARCH std::map time: 78 ms
+SEARCH rb tree time: 8259 ms
+==============END==============
     
 \end{alltt}
 
-Глядя на результаты, видно, что $std::stable\_sort$ выигрывает больше всего на самых маленьких тестах, а $BitWise sort$ на самых больших. Сложность $std::stable\_sort$ $O(n * log\ n)$, а сложность $Radix sort$ $O(m * n)$, где $m$ - количество разрядов в числе. Так как логарифм возрастающая функция, переломный момент наступает, когда $log\ n$ становится больше, чем постоянная $m$.
-
+Глядя на результаты, видно, что $std::map$ выигрывает на всех тестах. Видимо, создатели стандартной библиотеки потратили много времени на оптимизацию работы $std::map$.
 \pagebreak
 

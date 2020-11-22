@@ -698,30 +698,32 @@ namespace NMyStd{
 
 \section{Консоль}
 \begin{alltt}
-{\color{blue} (base) nikita@nikita-desktop:~/Diskran/lab1$ make}
-g++ -O3 -std=c++14 -o solution main.cpp vector.cpp vector.h
-{\color{blue} (base) nikita@nikita-desktop:~/Diskran/lab1$ cat test_input.txt}
-a5db3d43b37a95cd00618a7ac3112f7e LQFZzcjKUIgaNHdxMhDRzSojQdKKdJRxqntO
-d40c0348390bdb0e0fee9348cc8d2e67 vVNAzruNkZUPUUqHcmfWgkwdOGTSJeaAINZ
-364590e5c89b6b1c54231793d261a3b2 wMmpTNRfxIrkciktSkSdLYabpVgehC
-734bf391f564bd5aff79a1fefeb358b7 m
-e31adffb1b4418881731733600387d82 vJCqcbdkeEVJLWwRbPTRWk
-caf836a9f342e48deb43e8215b23b177 FbGyVbPqdyvlQoJoqmvdiaCboIkNOILfldOAPtjxbzoVUxFKSOvppxRCtf
-5a3378d5ca2706bffab672e07894212b QKutCZfccVqEZORVvVxPICHQYAOemh
-0472d854d83d11c287ec7d9eff9b8146 CvqgXrzHlEWFRIORDYhvJH
-c41d2af1b376b9fc1f95fce356012712 SYhTAeNdhtZlTAWOreQeMNPaGgFSYNRMpoldNrUDsEAIR
-8a18a352c07e3af6411007385bffd0ed ibdyiGQrGFQbLZngBwpsNoMiUrIGvkQwHwYGwVSWZ
-{\color{blue} (base) nikita@nikita-desktop:~/Diskran/lab1$ ./solution < test_input.txt}
-0472d854d83d11c287ec7d9eff9b8146 CvqgXrzHlEWFRIORDYhvJH
-364590e5c89b6b1c54231793d261a3b2 wMmpTNRfxIrkciktSkSdLYabpVgehC
-5a3378d5ca2706bffab672e07894212b QKutCZfccVqEZORVvVxPICHQYAOemh
-734bf391f564bd5aff79a1fefeb358b7 m
-8a18a352c07e3af6411007385bffd0ed ibdyiGQrGFQbLZngBwpsNoMiUrIGvkQwHwYGwVSWZ
-a5db3d43b37a95cd00618a7ac3112f7e LQFZzcjKUIgaNHdxMhDRzSojQdKKdJRxqntO
-c41d2af1b376b9fc1f95fce356012712 SYhTAeNdhtZlTAWOreQeMNPaGgFSYNRMpoldNrUDsEAIR
-caf836a9f342e48deb43e8215b23b177 FbGyVbPqdyvlQoJoqmvdiaCboIkNOILfldOAPtjxbzoVUxFKSOvppxRCtf
-d40c0348390bdb0e0fee9348cc8d2e67 vVNAzruNkZUPUUqHcmfWgkwdOGTSJeaAINZ
-e31adffb1b4418881731733600387d82 vJCqcbdkeEVJLWwRbPTRWk
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ cat tests/01.t
+- Uem
++ pIf 8572865303358239346
+- pif
++ LXJ 12585191085582405622
++ WaQ 827540325854635655
++ TwA 1557288716028993608
+- uME
++ lOI 11910927907411161470
+- ggn
++ rDx 12535053293624054263
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ cat tests/01.a
+NoSuchWord
+OK
+OK
+OK
+OK
+OK
+NoSuchWord
+OK
+NoSuchWord
+OK
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ make
+g++ -std=c++17 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic -o solution main.cpp
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ ./solution < tests/01.t > res.txt
+nezhov@LAPTOP-VDTFKP8R:/mnt/c/Users/nikit/Diskran/lab2$ diff res.txt tests/01.a
 \end{alltt}
 \pagebreak
 
