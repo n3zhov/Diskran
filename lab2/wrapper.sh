@@ -32,12 +32,13 @@ function main() {
   if (($test_generate_flag == 1)) ; then
     rm -rf ${test_dir}
     mkdir -p ${test_dir}
-    if ! (python3 generator.py) ; then
+    count_of_tests=$2
+    if ! (python3 generator.py ${count_of_tests}) ; then
       echo "ERROR: Failed to python generate tests."
       exit 1
     fi
   else
-    echo "Skip test generating"
+    log_info "Skip test generating"
   fi
 
   log_info "Stage #3 Checking..."
@@ -65,13 +66,13 @@ function main() {
     log_info "Failed to compile benchmark."
     return 1
   fi
-  local benchmark_bin=./benchmark
+  local benchmark_bin=./benchmark.o
   # shellcheck disable=SC2045
   for test_file in $( ls ${test_dir}/*.t ) ; do
     count_of_lines=$(wc -l < ${test_file})
     log_info "Running ${test_file}" 
     echo "Count of requests is ${count_of_lines}"
-    if ! ${benchmark_bin} < ${test_file}; then
+    if ! ${benchmark_bin} < ${test_file} > res.txt; then
       log_error "Failed to run ${benchmark_bin} for ${test_file}."
       return 1
     fi

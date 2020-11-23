@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 
 
 def get_random_key():
@@ -8,8 +9,8 @@ def get_random_key():
 
 if __name__ == "__main__":
     actions = ["+", "+", "-", "?"]
-
-    for enum in range(1, 8):
+    count_of_tests = int(sys.argv[1]) + 1
+    for enum in range(1, count_of_tests):
         keys = dict()
         test_file_name = "tests/{:02d}".format(enum)
         with open("{0}.t".format(test_file_name), 'w') as output_file, \
