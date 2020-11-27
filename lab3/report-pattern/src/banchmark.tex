@@ -1,0 +1,24 @@
+\section{Потребление оперативной памяти}
+Тест представляет из себя следующее: запускаем исполняемый файл solution на тесте $10^7$ с использованием valgrind
+
+\begin{alltt}
+(base) nikita@nikita-desktop:~/CLionProjects/Diskran/lab2$ valgrind --tool=memcheck ./solution < tests/07.t > res.txt      
+==5308== Memcheck, a memory error detector
+==5308== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5308== Using Valgrind-3.16.1 and LibVEX; rerun with -h for copyright info
+==5308== Command: ./solution
+==5308== 
+==5308== 
+==5308== HEAP SUMMARY:
+==5308==     in use at exit: 0 bytes in 0 blocks
+==5308==   total heap usage: 2,008,766 allocs, 2,008,766 frees, 610,761,250 bytes allocated
+==5308== 
+==5308== All heap blocks were freed -- no leaks are possible
+==5308== 
+==5308== For lists of detected and suppressed errors, rerun with: -s
+==5308== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+\end{alltt}
+
+Как видно из теста, в собственной реализации КЧ-Дерева нет никаких утечек памяти.
+\pagebreak
+

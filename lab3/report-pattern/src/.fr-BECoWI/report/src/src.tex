@@ -1,0 +1,182 @@
+\section{Описание}
+Требуется написать реализацию алгоритма поразрядной сонртировки. 
+Как сказано в \cite{Kormen}: \enquote{Сам алгоритм состоит в последовательной сортировке объектов какой-либо устойчивой сортировкой по каждому разряду, в порядке от младшего разряда к старшему, после чего последовательности будут расположены в требуемом порядке}. В качестве устойчивой сортировки для разряда использую устойчивую версию сортировки подсчетом\cite{wikipedia_sort}. 
+
+Устойчивая сортировка подсчетом осуществляется с помошью свух вспомогательных массивов: один для счетчика, другой для записи отсортированного результата. Для удобства обозначу: $A$ - исходный массив, $B$ - результирующий массив, $C$ - массив для подсчета. 
+
+Сначала заполняю $C$ нулями. Затем для каждого $A[i]$ увеличиваю $C[A[i]]$ на единицу. Суммирую каждый $C[i] с C[i - 1]$, кроме $C[0]$. Последним читаю входной массив с конца, записываю в $B[C[A[i]]]$ $A[i]$ и уменьшаю $C[A[i]]$ на единицу\cite{wikipedia_sort}.
+
+\pagebreak
+
+\section{Исходный код}
+На каждой непустой строке входного файла располагается пара \enquote{ключ-значение}, поэтому создаду новую 
+структуру $item$, в которой буду хранить ключ (массив из восьми $integer$) и указатель на значение (массив из 2050 элемнтов типа $char$).  Сортирую по указателю, так как копирование строки занимает слишком много времени. Так как количество пар во входных данных не указано, считываю данные в цикле $while$. Для хранения пар использую $TVector<item>$, который динамически выделяет память под новые пары и аналогичный TVector<char*> для хранения строк. Из воода считываю ключ и значение как строки, затем перевожу строчный ключ в массив $integer$ и сохраняю в $TVector<item>$, строку сохраняю без преобразований. Так как $TVector$ перевыдеяет память, если в уже выделенной не хватает места для нового элемента, то все ранее сохраненные указатели становтся невалидными. Поэтому указаетльи для  $item$ записыаю после окончания ввода в отдельном цикле.
+
+Сортирую LSD-сортировкой. Фактически за один разряд беру четырехзначное шестнадцатиричное число (массив из восьми $integer$). Иными словани перевожу 32-разрядные шестнадцатиричные числа в 8-разрядные 65 536-ричные. Делаю это для ускорения сортировки, так как ограниечение по памяти позволяет. 
+
+Выполняю сортироку в цикле, от младщего разряда к старшему. Для сортировки подсчетом выдеяю массив из 65 536 элементов, обнуляю его. Подсчитываю сколько каждая пара встречалась во входных данных и записываю по соответствующим индексам. Считаю префексные суммы, записываю в массив для посдеча. Теперь по индексу указано, сколько есть элементов, которвые меньше или равны элементу в индексе. Завожу указатель под результирующий массив $item$-ов и выделяю для него память. В обратом порядке прохожусь по исходному $TVector<item>$ и записываю в результирующий массив элемнты, глядя на массив для подсчета. Уменьшаю на 1 значение по индексу для текущего $item$. Выполняю то же самое для остальных разрядов.
+
+Вывожу отвтет.
+
+\pagebreak
+\begin{lstlisting}[language=C]
+//
+// vector.h
+//
+
+#ifndef LAB1_TVector_H
+#define LAB1_TVector_H
+template <class T>
+class TVector{
+    private:
+        long long TVectorSize;
+        long long TVectorCapacity;
+        T* Data;
+    public:
+        void Assign(const T elem);
+        TVector();
+        TVector(const long long n);
+        long long Size();
+        void PushBack(const T &elem);
+        T& operator[] (const long long iterator);
+        ~TVector();
+};
+#endif
+\end{lstlisting}
+
+\begin{lstlisting}[language=C]
+//
+// main.cpp
+//
+
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <cstring>
+#include "vector.h"
+#include "vector.cpp"
+
+const unsigned int KEY_SIZE = 8;
+const unsigned int KEY_RADIX_SIZE = 4;
+const unsigned int VALUE_SIZE = 2050;
+const unsigned int MAX_KEY_VALUE = 0xffff;
+
+struct item{
+    int Key[KEY_SIZE];
+    char** Value;
+};
+
+int main(){
+    std::cin.tie(nullptr);
+    std::cout.tie(nullptr);
+    std::ios_base::sync_with_stdio(false);
+    char strKey[33];
+    TVector<item> sortArray;
+    TVector<char*> valueData;
+    char currentValue[VALUE_SIZE];
+    item currentPair;
+    while (std::cin >> strKey >> currentValue){
+        for (int & i : currentPair.Key){
+            i = 0;
+        }
+        for (int i = KEY_SIZE - 1; i >= 0; --i){
+            int radixMultiply = 1;
+            for (int j = KEY_RADIX_SIZE - 1; j >= 0; --j){
+                if (strKey[i * KEY_RADIX_SIZE + j] >= '0' && strKey[i * KEY_RADIX_SIZE + j] <= '9'){
+                    currentPair.Key[i] += (strKey[i * KEY_RADIX_SIZE + j] - '0') * radixMultiply;
+                }
+                else if (strKey[i * KEY_RADIX_SIZE + j] >= 'a' && strKey[i * KEY_RADIX_SIZE + j] <= 'f'){
+                    currentPair.Key[i] += (strKey[i * KEY_RADIX_SIZE + j] - 'a' + 10) * radixMultiply;
+                }
+                radixMultiply *= 16;
+            }
+        }
+        char* newValue = new char[VALUE_SIZE];
+        std::memcpy(newValue, currentValue, sizeof(char)*VALUE_SIZE);
+        valueData.PushBack(newValue);
+        sortArray.PushBack(currentPair);
+    }
+    for (long long i = 0; i < sortArray.Size(); ++i){
+        sortArray[i].Value = &valueData[i];
+    }
+
+    for (int radixNumber= KEY_SIZE - 1; radixNumber >= 0; --radixNumber){
+        long long countingArray[MAX_KEY_VALUE + 1];
+        for (unsigned int i = 0; i <= MAX_KEY_VALUE; ++i){
+            countingArray[i] = 0;
+        }
+        for (long long i = 0; i < sortArray.Size(); ++i){
+            countingArray[sortArray[i].Key[radixNumber]] += 1;
+        }
+        for (unsigned int i = 1; i <= MAX_KEY_VALUE; ++i){
+            countingArray[i] += countingArray[i - 1];
+        }
+        item* result = new item[sortArray.Size()];
+        for (long long i = sortArray.Size() - 1; i >= 0; --i){
+            result[countingArray[sortArray[i].Key[radixNumber]] - 1] = sortArray[i];
+            countingArray[sortArray[i].Key[radixNumber]] = countingArray[sortArray[i].Key[radixNumber]] - 1;
+        }
+        for (long long i = 0; i < sortArray.Size(); ++i){
+            sortArray[i] = result[i];
+        }
+        delete [] result;
+    }
+
+    for (long long i = 0; i < sortArray.Size(); ++i){
+        for (int j : sortArray[i].Key){
+            std::cout << std::hex << std::setw(4) << std::setfill('0') << j;
+        }
+        std::cout << " " << *sortArray[i].Value << "\n";
+    }
+    for (long long i = 0; i < valueData.Size(); ++i){
+        delete [] valueData[i];
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+\hline
+\rowcolor{lightgray}
+\multicolumn{2}{|c|} {vector.cpp}\\
+\hline
+TVector()&Конструктор TVector, обнуляет размер, емкость и указатель на данные.\\
+\hline
+Size()&Метод TVector, возвращает размер.\\
+\hline
+PushBack(const T \&elem)&Метод TVector, добавляет новый элемент шаблонного класса T в конец TVector.\\
+\hline
+operator[](const long long iterator)&Перегруженный оператор []. Возвращает данные по итераторру.\\
+\hline
+\end{longtable}
+\pagebreak
+
+\section{Консоль}
+\begin{alltt}
+{\color{blue} protaxy@protaxY:~/DA/da_lb1$ make}
+g++ -O3 -std=c++14 -o solution main.cpp vector.cpp vector.h
+{\color{blue} protaxy@protaxY:~/DA/da_lb1$ cat test_input.txt}
+00000000000000000000000000000000 xGfxrxGGxrxMMMMfrrrG
+ffffffffffffffffffffffffffffffff xGfxrxGGxrxMMMMfrrr
+00000000000000000000000000000000 xGfxrxGGxrxMMMMfrr
+ffffffffffffffffffffffffffffffff xGfxrxGGxrxMMMMfr
+1dc575e626f7c8b417f202077026273d MIFWzvYrPBZAXVY
+9af96543c4481d9f9baeb19ad282f0b4 UJ
+94e8780e66d797a4df042f131450dbd3 bceuHWDhH
+621521cddd0e8ec18bd0f1fbead89d68 PMFknR
+9d9c4419436223e1e1817d7796067a61 JCUrPPTsniODesytPNfUacELQZi
+8ce57ef3cb0db9ea7bee536a82e31be2 TKSYZpVbVTyMx
+{\color{blue} protaxy@protaxY:~/DA/da_lb1$ ./solution < test_input.txt}
+00000000000000000000000000000000 xGfxrxGGxrxMMMMfrrrG
+00000000000000000000000000000000 xGfxrxGGxrxMMMMfrr
+1dc575e626f7c8b417f202077026273d MIFWzvYrPBZAXVY
+621521cddd0e8ec18bd0f1fbead89d68 PMFknR
+8ce57ef3cb0db9ea7bee536a82e31be2 TKSYZpVbVTyMx
+94e8780e66d797a4df042f131450dbd3 bceuHWDhH
+9af96543c4481d9f9baeb19ad282f0b4 UJ
+9d9c4419436223e1e1817d7796067a61 JCUrPPTsniODesytPNfUacELQZi
+ffffffffffffffffffffffffffffffff xGfxrxGGxrxMMMMfrrr
+ffffffffffffffffffffffffffffffff xGfxrxGGxrxMMMMfr
+\end{alltt}
+\pagebreak
+

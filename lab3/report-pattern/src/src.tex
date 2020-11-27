@@ -1,0 +1,91 @@
+\section{Дневник отладки}
+1. Напишем файл benchmark.cpp, в котором замерим время работы std::map и КЧ-Дерева при помощи библиотеки <chrono> (пункт: скорость выполнения).
+\\2. При помощи valgrind оценим утечки и расход памяти для std::map и собственного КЧ-Дерева (пункт: потребление оперативной памяти).
+\\3. В собственной реализации не было найдено никаких утечек памяти: All heap blocks were freed -- no leaks are possible
+\\4. При помощи gprof выяснили, что наибольшее время занимают операции вставки и удаления в дерево.
+
+\pagebreak
+\section{Скорость выполнения}
+Тест представляет из себя следующее: при помощи генератора тестов был создан файл с $10^7$ строками, каждая из которых
+является командой к дереву (добавление, удаление или поиск). Измеряем время на выполнение операций для std::map и КЧ-Дерева. 
+\begin{alltt}{
+    (base) nikita@nikita-desktop:~/CLionProjects/Diskran/lab2$ ./benchmark.o < tests/07.t
+    ==============START============
+    INSERT std::map time: 5286 ms
+    INSERT rb tree time: 38894 ms
+    ===============================
+    DELETE std::map time: 4438 ms
+    DELETE rb tree time: 19721 ms
+    ===============================
+    SEARCH std::map time: 1825 ms
+    SEARCH rb tree time: 15717 ms
+    ==============END==============
+}    
+\end{alltt}
+Как видно, все операции из std::map выполняются быстрее, чем для собственной реализации КЧ-Дерева. Скорее всего, это связано с тем, что работу 
+стандартной библиотеки C++ постоянно оптимизируют, из-за чего собственные реализации функций выполняются относительно медленнее.
+\pagebreak
+\section{gprof}
+Скомпилируем программу с флагом -pg. Запустим нашу программу на тесте с $10^7$ входных строк. После этого в текущей директории создался файл gmoun.out,
+чтобы посмотреть результат работы профилирования выполним команду gprof solution gmon.out.
+\begin{alltt}{
+%   cumulative   self              self     total           
+time   seconds   seconds    calls  ns/call  ns/call  name    
+68.05      1.74     1.74                             
+NMyStd::TRBTree::Insert(NMyStd::TItem const&, NMyStd::TRBNode*)
+24.64      2.37     0.63                             
+NMyStd::TRBTree::Remove(char const*)
+3.13      2.45     0.08  1998364    40.08    60.12  
+NMyStd::TRBTree::Remove(NMyStd::TRBNode*)
+1.96      2.50     0.05                             
+NMyStd::TRBTree::Insert(NMyStd::TItem const&)
+1.56      2.54     0.04  1161306    34.49    34.49  
+NMyStd::TRBTree::RemoveFixUp(NMyStd::TRBNode*, NMyStd::TRBNode*)
+0.78      2.56     0.02   853961    23.45    23.45  
+NMyStd::TRBTree::InsertFixUp(NMyStd::TRBNode*)
+0.00      2.56     0.00        1     0.00     0.00  
+_GLOBAL__sub_I__ZN6NMyStd7TRBTree6SearchEPcRNS_5TItemE   
+}    
+\end{alltt}
+По данной таблице можно понять, что больше всего времени уходит на вставку и удаление из дерева.
+\\Дальше выводится граф вызовов (тут я вывел его в укороченном виде), в каждой строке графа указываются
+функция, в предыдыущих строках выводиятся функции вызываемые данной функцией. Таким образом можно определить,
+где происходят вызовы наиболее долгих функций, ведь сама функция может выполняться быстро, но функции вызываемые ей
+могут тратить много времени.
+\begin{alltt}{
+    index % time    self  children    called     name
+    <spontaneous>
+[1]     68.8    1.74    0.02                 
+NMyStd::TRBTree::Insert(NMyStd::TItem const&, NMyStd::TRBNode*) [1]
+0.02    0.00  853961/853961      
+NMyStd::TRBTree::InsertFixUp(NMyStd::TRBNode*) [6]
+-----------------------------------------------
+    <spontaneous>
+[2]     29.3    0.63    0.12                 
+NMyStd::TRBTree::Remove(char const*) [2]
+0.08    0.04 1998364/1998364     
+NMyStd::TRBTree::Remove(NMyStd::TRBNode*) [3]
+-----------------------------------------------
+0.08    0.04 1998364/1998364     
+NMyStd::TRBTree::Remove(char const*) [2]
+[3]      4.7    0.08    0.04 1998364         
+NMyStd::TRBTree::Remove(NMyStd::TRBNode*) [3]
+0.04    0.00 1161306/1161306     
+NMyStd::TRBTree::RemoveFixUp(NMyStd::TRBNode*, NMyStd::TRBNode*) [5]
+-----------------------------------------------
+    <spontaneous>
+[4]      2.0    0.05    0.00                 
+NMyStd::TRBTree::Insert(NMyStd::TItem const&) [4]
+-----------------------------------------------
+0.04    0.00 1161306/1161306     
+NMyStd::TRBTree::Remove(NMyStd::TRBNode*) [3]
+[5]      1.6    0.04    0.00 1161306         
+NMyStd::TRBTree::RemoveFixUp(NMyStd::TRBNode*, NMyStd::TRBNode*) [5]
+-----------------------------------------------
+0.02    0.00  853961/853961      
+NMyStd::TRBTree::Insert(NMyStd::TItem const&, NMyStd::TRBNode*) [1]
+[6]      0.8    0.02    0.00  853961         
+NMyStd::TRBTree::InsertFixUp(NMyStd::TRBNode*) [6]
+}
+\end{alltt}    
+
