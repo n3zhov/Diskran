@@ -17,10 +17,11 @@ int main(){
         }
         else if(c == '\n'){
             NSearch::TWord cur;
-            std::memcpy(cur.Word, word, sizeof(char) * MAX_WORD_SIZE);
             cur.WordSize = wordIndex + 1;
+            cur.Word = (char*)malloc(sizeof(char)*MAX_WORD_SIZE);
             if(flagPatternText){
                 pattern.push_back(cur);
+                std::memcpy(cur.Word, word, sizeof(char) * MAX_WORD_SIZE);
                 NSearch::Clear(word, MAX_WORD_SIZE);
                 flagPatternText = false;
             }

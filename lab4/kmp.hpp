@@ -6,7 +6,7 @@
 #define LAB4_KMP_HPP
 #include <string>
 #include <vector>
-int MAX_WORD_SIZE = 17;
+const int MAX_WORD_SIZE = 17;
 namespace NSearch {
     struct TWord{
         char *Word;
@@ -40,38 +40,39 @@ namespace NSearch {
         res[0] = 0;
         int length = input.size();
         for (int i = 1; i < length; ++i) {
-            int currInd = res[i - 1];
-            while(currInd > 0 && input[i] != input[currInd]){
-               currInd = res[currInd - 1];
+            int j = res[i - 1];
+            while(j > 0 && input[i] != input[j]){
+               j = res[j - 1];
             }
-            if (input[i] == input[currInd]){
-                ++currInd;
+            if (input[i] == input[j]){
+                ++j;
             }
-            res[i] = currInd;
+            res[i] = j;
         }
         return res;
     }
     std::vector<int> KMP(std::vector<TWord>&pattern, std::vector<TWord> &text){
+        std::vector<int> prefix = PrefixFunction(pattern);
         int patternSize = pattern.size();
         int textSize = text.size();
-        std::vector<TWord> resText(patternSize + textSize + 1);
-        for(int i = 0; i < patternSize; ++i){
-            resText[i] = pattern[i];
-        }
-        resText[patternSize].Word = (char*)malloc(sizeof(char)*MAX_WORD_SIZE);
-        resText[patternSize].Word[0] = '#';
-        for(int i = 0; i < textSize; ++i){
-            resText[patternSize + i + 1] = text[i];
-        }
-        std::vector<int> prefix = PrefixFunction(resText);
+        int i = 0;
         std::vector<int> answer;
-        if (patternSize > textSize){
+        if (patternSize > textSize) {
             return answer;
         }
-        for(int i = 0; i < textSize; ++i){
-            if(prefix[patternSize + i + 1] == patternSize){
-                answer.push_back(i - patternSize + 1);
+        while (i < textSize - patternSize + 1) {
+            int j = 0;
+            while (j < patternSize and pattern[j] == text[i + j]) {
+                ++j;
             }
+            if (j == patternSize) {
+                answer.push_back(i);
+            } else {
+                if (j > 0 and j > prefix[j - 1]) {
+                    i = i + j - prefix[j - 1] - 1;
+                }
+            }
+            ++i;
         }
         return answer;
     }
