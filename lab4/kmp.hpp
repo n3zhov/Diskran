@@ -4,43 +4,51 @@
 
 #ifndef LAB4_KMP_HPP
 #define LAB4_KMP_HPP
-#include <string>
 #include <vector>
-const int MAX_WORD_SIZE = 17;
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <cctype>
+const long long MAX_WORD_SIZE = 17;
 namespace NSearch {
     struct TWord{
         char *Word;
-        int WordId, StringId, WordSize;
+        long long WordId, StringId, WordSize;
+        TWord(){
+            Word = nullptr;
+            WordId = 0;
+            StringId = 0;
+            WordSize = 0;
+        }
     };
-    void Clear(char* string, int size){
-        for (int i = 0; i < size; ++i){
+    void Clear(char* string, long long size){
+        for (long long i = 0; i < size; ++i){
             string[i] = '\0';
         }
     }
-    bool operator == (const TWord& lhs, const TWord rhs){
+    bool operator == (const TWord& lhs, const TWord &rhs){
         if(lhs.WordSize != rhs.WordSize){
             return false;
         }
-        for (int i = 0; i < lhs.WordSize; ++i){
+        for (long long i = 0; i < lhs.WordSize; ++i){
             if(lhs.Word[i] != rhs.Word[i])
                 return false;
         }
         return true;
     }
-    bool operator != (const TWord& lhs, const TWord rhs){
+    bool operator != (const TWord& lhs, const TWord &rhs){
         return !(lhs == rhs);
     }
     void Clear(char *arr) {
-        for (int i = 0; i < MAX_WORD_SIZE; ++i) {
+        for (long long i = 0; i < MAX_WORD_SIZE; ++i) {
             arr[i] = 0;
         }
     }
-    std::vector<int> PrefixFunction(const std::vector<TWord> &input) {
-        std::vector<int> res(input.size());
-        res[0] = 0;
-        int length = input.size();
-        for (int i = 1; i < length; ++i) {
-            int j = res[i - 1];
+    std::vector<long long> PrefixFunction(const std::vector<TWord> &input) {
+        std::vector<long long> res(input.size());
+        long long length = input.size();
+        for (long long i = 1; i < length; ++i) {
+            long long j = res[i - 1];
             while(j > 0 && input[i] != input[j]){
                j = res[j - 1];
             }
@@ -51,24 +59,24 @@ namespace NSearch {
         }
         return res;
     }
-    std::vector<int> KMP(std::vector<TWord>&pattern, std::vector<TWord> &text){
-        std::vector<int> prefix = PrefixFunction(pattern);
-        int patternSize = pattern.size();
-        int textSize = text.size();
-        int i = 0;
-        std::vector<int> answer;
-        if (patternSize > textSize) {
+    std::vector<long long> KMP(std::vector<TWord>&pattern, std::vector<TWord> &text){
+        std::vector<long long> prefix = PrefixFunction(pattern);
+        long long patternSize = pattern.size();
+        long long textSize = text.size();
+        long long i = 0;
+        std::vector<long long> answer;
+        if (patternSize > textSize || patternSize == 0) {
             return answer;
         }
         while (i < textSize - patternSize + 1) {
-            int j = 0;
-            while (j < patternSize and pattern[j] == text[i + j]) {
+            long long j = 0;
+            while (j < patternSize && pattern[j] == text[i + j]) {
                 ++j;
             }
             if (j == patternSize) {
                 answer.push_back(i);
             } else {
-                if (j > 0 and j > prefix[j - 1]) {
+                if (j > 0 && j > prefix[j - 1]) {
                     i = i + j - prefix[j - 1] - 1;
                 }
             }
