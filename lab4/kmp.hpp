@@ -5,62 +5,35 @@
 #ifndef LAB4_KMP_HPP
 #define LAB4_KMP_HPP
 #include <vector>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cctype>
-const long long MAX_WORD_SIZE = 17;
+#include <string>
 namespace NSearch {
     struct TWord{
-        char *Word;
-        long long WordId, StringId, WordSize;
-        TWord(){
-            Word = nullptr;
-            WordId = 0;
-            StringId = 0;
-            WordSize = 0;
-        }
+        std::string Word;
+        long long WordId, StringId;
     };
-    void Clear(char* string, long long size){
-        for (long long i = 0; i < size; ++i){
-            string[i] = '\0';
+    std::string tolower(std::string &data){
+        int size = data.size();
+        for (int i = 0; i < size; ++i){
+            data[i] = std::tolower(data[i]);
         }
-    }
-    bool operator == (const TWord& lhs, const TWord &rhs){
-        if(lhs.WordSize != rhs.WordSize){
-            return false;
-        }
-        for (long long i = 0; i < lhs.WordSize; ++i){
-            if(lhs.Word[i] != rhs.Word[i])
-                return false;
-        }
-        return true;
-    }
-    bool operator != (const TWord& lhs, const TWord &rhs){
-        return !(lhs == rhs);
-    }
-    void Clear(char *arr) {
-        for (long long i = 0; i < MAX_WORD_SIZE; ++i) {
-            arr[i] = 0;
-        }
+        return data;
     }
     std::vector<long long> PrefixFunction(const std::vector<TWord> &input) {
         std::vector<long long> res(input.size());
         long long length = input.size();
         for (long long i = 1; i < length; ++i) {
             long long j = res[i - 1];
-            while(j > 0 && input[i] != input[j]){
+            while(j > 0 && input[i].Word != input[j].Word){
                j = res[j - 1];
             }
-            if (input[i] == input[j]){
+            if (input[i].Word == input[j].Word){
                 ++j;
             }
             res[i] = j;
         }
         return res;
     }
-    std::vector<long long> KMP(std::vector<TWord>&pattern, std::vector<TWord> &text){
-        std::vector<long long> prefix = PrefixFunction(pattern);
+    std::vector<long long> KMP(std::vector<TWord>&pattern, std::vector<TWord> &text, std::vector<long long> &prefix){
         long long patternSize = pattern.size();
         long long textSize = text.size();
         long long i = 0;
@@ -70,14 +43,16 @@ namespace NSearch {
         }
         while (i < textSize - patternSize + 1) {
             long long j = 0;
-            while (j < patternSize && pattern[j] == text[i + j]) {
+            while (j < patternSize && pattern[j].Word == text[i + j].Word) {
                 ++j;
             }
             if (j == patternSize) {
                 answer.push_back(i);
-            } else {
+            }
+            else{
                 if (j > 0 && j > prefix[j - 1]) {
-                    i = i + j - prefix[j - 1] - 1;
+                    i = i + j - prefix[j - 1];
+                    continue;
                 }
             }
             ++i;
