@@ -1,0 +1,29 @@
+\section{Тест производительности}
+Время на ввод и посторение структур данных не учитывается, замеряется только время, затраченное на сортировку. Количество пар \enquote{ключ-значение} для каждого файла равно десять в степени номер теста. Например, $02.txt$ содержит сто пар, а $06.txt$ миллион.
+
+\begin{alltt}
+protaxy@protaxY:~/DA/da_lb1$g++ -std=c++14 benchmark.cpp -o benchmark
+protaxy@protaxY:~/DA/da_lb1$ ./bechmarck < tests/01.txt
+Radix sort:1550 microseconds
+std::stable_sort:6 microseconds
+protaxy@protaxY:~/DA/da_lb1$ ./benchmark < tests/02.txt
+Radix sort:1566 microseconds
+std::stable_sort:46 microseconds
+protaxy@protaxY:~/DA/da_lb1$ ./benchmark < tests/03.txt
+Radix sort:1930 microseconds
+std::stable_sort:704 microseconds
+protaxy@protaxY:~/DA/da_lb1$ ./benchmark < tests/04.txt
+Radix sort:5187 microseconds
+std::stable_sort:5689 microseconds
+protaxy@protaxY:~/DA/da_lb1$ ./benchmark < tests/05.txt
+Radix sort:26987 microseconds
+std::stable_sort:79901 microseconds
+protaxy@protaxY:~/DA/da_lb1$ ./benchmark < tests/06.txt
+Radix sort:370515 microseconds
+std::stable_sort:1185799 microseconds
+\end{alltt}
+
+Глядя на результаты, видно, что $std::stable\_sort$ выигрывает больше всего на самых мальеньких тестах, а $Radix sort$ на самых больших. Сложность $std::stable\_sort$ $O(n * log\ n)$, а сложность $Radix sort$ $O(d * n)$, где $d$ - количество разрядов в числе. Так как логарифм возрастающая функция, переломный момент наступает, когда $log\ n$ становится больше, чем постоянная $d$.
+
+\pagebreak
+
