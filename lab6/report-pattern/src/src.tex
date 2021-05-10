@@ -1,0 +1,443 @@
+\section{Описание}
+Требуется написать реализацию алгоритмов поразрядного сложения, вычитания, умножения, возведения в степень, а также деления.
+Можно работать с числами, как со строками, но разделение на разряды будет  позволять быстрее работать (за счёт 
+операций внутри над сравнительно маленькими числами). 
+\\ В качестве основания для наших чисел будем использовать
+$10^{7}$. Большие числа организуем при помощи класса TBigInt. В классе будет вектор "цифр" числа.
+В векторе цифр значения хранятся от младшего разряда к старшему, т.е. $bigInt[0]$ это самый младший разряд числа. 
+Также определим для данного класса базовые арифметические операции при помощи перегрузки операторов.
+\pagebreak
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{lightgray}
+    \multicolumn{2}{|c|} {TBigInt}\\
+    \hline
+    $size_t Size() const$&возвращает размер вектора большого числа\\
+    \hline
+    \hline
+    TBigInt() = default&Конструктор по умолчанию.\\
+    \hline
+    TBigInt(int num)&Конструктор для маленького числа.\\
+    \hline
+    explicit TBigInt(const size\_t \&size) : bigInt(size, 0) {}&Конструктор для создания числа, заданного размером size.\\
+    \hline
+    explicit TBigInt(const std::string \&str)&Конструктор для строки.\\
+    \hline
+    \hline
+    TBigInt operator $=$ (const TBigInt \&other)&Перегрузка оператора присваивания\\
+    \hline
+    \hline
+    friend TBigInt operator $+$ (TBigInt \&first, TBigInt \&second)&Перегрузка оператора сложения.\\
+    \hline
+    \hline
+    friend TBigInt operator $-$ (TBigInt \&first, TBigInt \&second)&Перегрузка оператора вычитания.\\
+    \hline
+    \hline
+    friend TBigInt operator $*$ (TBigInt \&first, TBigInt \&second)&Пегегрузка оператора умножения для больших чисел.\\
+    \hline
+    \hline
+    friend TBigInt operator $*$ (TBigInt \&first, const int \&second)&Пегегрузка оператора для умножения большого числа на малое.\\
+    \hline
+    \hline
+    friend TBigInt operator $/$ (TBigInt \&first, TBigInt \&second)&Пегегрузка оператора деления для больших чисел.\\
+    \hline
+    \hline
+    friend TBigInt operator $/$ (TBigInt \&first, const int \&second)&Пегегрузка оператора для деления большого числа на малое.\\
+    \hline
+    \hline
+    friend TBigInt operator $\hat{}$ (TBigInt \&first, TBigInt \&second)&Возведение большого числа в указанную степень.\\
+    \hline
+    \hline
+    friend std::ostream\& operator $<<$&Оператор вывода большого числа.\\
+    \hline
+    \hline
+    friend std::istream\& operator $>>$&Оператор ввода большого числа.\\
+    \hline
+    \hline
+    friend TBigInt operator $<$ (TBigInt \&first, TBigInt \&second)&Оператор сравнения $<$.\\
+    \hline
+    \hline
+    friend TBigInt operator $>$ (TBigInt \&first, TBigInt \&second)&Оператор сравнения $>$.\\
+    \hline
+    \hline
+    friend TBigInt operator $==$ (TBigInt \&first, TBigInt \&second)&Оператор сравнения $=$.\\
+    \hline
+\end{longtable}
+
+{\bfseries Замечание: во всех операторах после выполнения основной функции производится удаление лидирующих нулей, если такие есть.}
+
+\subsection{Сложение}
+Сложение реализовано просто - путём сложения "в столбик". Единственная разница в том, что основание условной "системы исчисления" у нас не 
+10, а $10^7$, что позволяет складывать большие числа быстрее. Если первое число меньше второго, то мы рекурсивно вызываем оператор
+$second + first$, т.к. удобно реализовать алгоритм для случая, когда $first \geq second$, а в случае обратного просто менять 
+их местами.
+
+\subsection{Вычитание}
+Вычитание также реализовано школьным методом, "в столбик"\, но при этом мы проверяем, что $first \geq second$, иначе выводим $Error$.
+
+\subsection{Умножение}
+Умножение реализовывается "в столбик". Реализуем две функции - одна для перемножения двух больших чисел, а вторая - для перемножения
+большого числа на относительно малое (вмещается в один разряд).
+
+\subsection{Деление}
+Деления большого числа на малое производится при помощи деления "в столбик"\, а для деления двух больших чисел алгоритм другой. Согласно
+\cite{Knut} алгоритм деления можно описать следующим образом: у нас есть два числа, $u = (u_{m+n+1} ... u_1*u_0)$ 
+и $(v_{n-1} ... v_1*v_0)$., представленным по основанию $b$, в предположении что $v_{n-1} \neq 0$ и $n > 1$, находим в системе счисления
+по основанию $b$ частное $[u/v] = (q_m*q_{m-1} ... q_0)$. Найти $d = [b/v_{n-1} + 1]$, после чего умножить оба числа на полученное $d$.
+Присвоить $j \leftarrow m$. Пока $j \geq 0$ выполняем следующие шаги:
+\\ $d \leftarrow [u_{j+n}*b + \frac{u_{j+n-1}}{v_{n-1}}]$
+\\ Тут начинается разница между алгоритмом из \cite{Knut} и итоговой реализацией. На ряде тестов, по неизвестным причинам (неправильно был
+переписан алгоритм в код или он просто не подходит), два раза проверить указанные неравенства недостаточно, чтобы получить правильный $d$.
+Зная, что $d \geq $искомого значения, алгоритм был модифицирован следующим образом: от $d$ отнимают по 1, если $v*d < \hat{r}$, где $\hat{r} = u[i]$ + $r*b$. Затем считаем новый $r \leftarrow r - v*d$, добавляем $d$ последним разрядом в результат и начинаем действия выше с начала.
+
+\subsection{Возведение в степень}
+Используется т.н. алгоритм бинарного возведения в степень. Это приём, позволяющий возводить любое число в $n$-ую степень за $O(log{n})$ умножений (вместо n). 
+\\{\bfseries Алгоритм:}
+\\Заметим, что для любого числа $a$ и {\bfseries чётного} числа $n$ выполнимо тождество $a^n = (a^{n/2})^2 = a^{n/2} * a^{n/2}$.
+\\Оно и является основным в методе бинарного возведения в степень. А если же $n$ нечётный, то для него верно следующее тождество $a^n = a^{n-1}*a$, где $n-1$
+- гарантированно чётное число. Очевидно, что для $a^{n-1}$ можно будет применить тождество, верное для чисел с чётным показателем степени.
+
+\subsection{Операции сравнения}
+Числа сравниваются "лексикографически"\, т.е. поразрядно (можно провести аналогию со строками).
+
+
+\pagebreak
+\section{Исходный код}
+\begin{lstlisting}[language=C++]
+//
+// main.cpp
+//
+
+#include <vector>
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+#include <algorithm>
+
+class TBigInt {
+private:
+    static const long int BASE = 1e7;
+    static const int DIGIT_LENGTH = 7;
+    std::vector<int> bigInt;
+public:
+    size_t Size() const {
+        return bigInt.size();
+    }
+
+    TBigInt() = default;
+
+    TBigInt(int num) {
+        if (!num) {
+            bigInt.push_back(0);
+        }
+        else {
+            while (num) {
+                bigInt.push_back(num % BASE);
+                num /= BASE;
+            }
+        }
+    }
+
+    explicit TBigInt(const size_t &size) : bigInt(size, 0) {};
+
+    explicit TBigInt(const std::string &str) {
+        bigInt.clear();
+        for (int i = (int)str.length(); i > 0; i -= DIGIT_LENGTH)
+            if (i < DIGIT_LENGTH)
+                bigInt.push_back (atoi(str.substr (0, i).c_str()));
+            else
+                bigInt.push_back (atoi(str.substr (i-DIGIT_LENGTH, DIGIT_LENGTH).c_str()));
+        while (bigInt.size() > 1 && bigInt.back() == 0)
+            bigInt.pop_back();
+    }
+    TBigInt operator = (const TBigInt &other) {
+        this->bigInt = other.bigInt;
+        return *this;
+    }
+
+    friend TBigInt operator + (TBigInt &first, TBigInt &second) {
+        if (first.Size() < second.Size()) {
+            return second + first;
+        }
+        TBigInt result = first;
+        int carry = 0;
+        for (int i = 0; i < std::max(result.Size(), second.Size()) || carry; ++i) {
+            if (i == result.Size()) {
+                result.bigInt.emplace_back(0);
+            }
+            result.bigInt[i] += carry + (i < second.Size() ? second.bigInt[i] : 0);
+            carry = result.bigInt[i] / BASE;
+            result.bigInt[i] %= BASE;
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+    friend TBigInt operator - (TBigInt &first, TBigInt &second) {
+        if (first < second) {
+            throw std::runtime_error("error");
+        }
+        int carry = 0;
+        TBigInt result(first);
+        for (int i = 0; i < static_cast<int>(second.Size()) || carry; ++i) {
+            result.bigInt.at(i) -= carry + (i < static_cast<int>(second.Size()) ? second.bigInt[i] : 0);
+            carry = result.bigInt[i] < 0;
+            if (carry != 0) {
+                result.bigInt.at(i) += BASE;
+            }
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+
+
+    friend TBigInt operator * (TBigInt &first, TBigInt &second) {
+        TBigInt result(first.Size() + second.Size());
+        int carry = 0;
+        for (int i = 0; i < first.Size(); ++i) {
+            carry = 0;
+            for (int j = 0; j < int(second.Size()) || carry; ++j) {
+                long long curr = result.bigInt[i + j] + carry + first.bigInt[i] * 1ll * (j < (int)second.Size() ? second.bigInt[j] : 0);
+                result.bigInt[i + j] = int(curr % BASE);
+                carry = int(curr / BASE);
+            }
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+    friend TBigInt operator * (TBigInt &first, const int &second) {
+        TBigInt result(first);
+        int carry = 0;
+        for (int i = 0; i < result.Size() || carry; ++i) {
+            if (i == result.Size()) {
+                result.bigInt.push_back(0);
+            }
+            long long curr = carry + result.bigInt[i] * 1ll * second;
+            result.bigInt[i] = int (curr % BASE);
+            carry = (int) (curr / BASE);
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+    friend TBigInt operator / (TBigInt &first, TBigInt &second) {
+        if(first < second) {
+            return TBigInt("0");
+        }
+        if((second.Size() == 1) && second.bigInt[0] == 0) {
+            throw std::runtime_error("error");
+        }
+        int norm = BASE / (second.bigInt.back() + 1);
+        TBigInt lCopy = first * norm;
+        TBigInt rCopy = second * norm;
+        TBigInt q(lCopy.Size());
+        TBigInt r;
+        for (int i = lCopy.Size() - 1; i >= 0; --i) {
+            r = r * BASE;
+            TBigInt increment(std::to_string(lCopy.bigInt[i]));
+            r = r + increment;
+            int s1 = r.Size() <= rCopy.Size() ? 0 : r.bigInt[rCopy.Size()];
+            int s2 = r.Size() <= rCopy.Size() - 1 ? 0 : r.bigInt[rCopy.Size() - 1];
+            int d = static_cast<int>((static_cast<int>(s1) * BASE + s2) / rCopy.bigInt.back());
+            TBigInt  tmp = rCopy * d;
+            while (tmp > r){
+                tmp = tmp - rCopy;
+                d--;
+            }
+            r = r - tmp;
+            q.bigInt[i] = d;
+        }
+        while (q.bigInt.size() > 1 and q.bigInt.back() == 0) {
+            q.bigInt.pop_back();
+        }
+        return q;
+    }
+
+    friend TBigInt operator / (TBigInt &first, const int &second) {
+        if (second == 0) {
+            throw std::runtime_error("error");
+        }
+        int carry = 0;
+        TBigInt result(first);
+        for (int i = result.Size() - 1; i >= 0; --i) {
+            long long curr = result.bigInt[i] + carry *1ll * BASE;
+            result.bigInt[i] = int (curr/second);
+            carry = int (curr % second);
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+    friend TBigInt operator ^ (TBigInt &first, TBigInt &second) {
+        if ((first.Size() == 1 && first.bigInt[0] == 0) && (second.Size() == 1 && second.bigInt[0] == 0)) {
+            throw std::runtime_error("error");
+        }
+        TBigInt decrement("1");
+        TBigInt num(first);
+        TBigInt result("1");
+        while (!(second.Size() == 1 && second.bigInt[0] == 0)) {
+            if ((second.bigInt[0] % 10) % 2 == 0) {
+                num = num * num;
+                second = second / 2;
+            } else {
+                result = result * num;
+                second = second - decrement;
+            }
+        }
+        while (result.bigInt.size() > 1 and result.bigInt.back() == 0) {
+            result.bigInt.pop_back();
+        }
+        return result;
+    }
+
+    friend std::ostream& operator << (std::ostream &os, const TBigInt &num) {
+        int num_len = num.Size();
+        os << num.bigInt.back();
+        for (int i = num_len - 2; i >= 0; --i) {
+            os << std::setfill('0') << std::setw(DIGIT_LENGTH) << num.bigInt[i];
+        }
+        return os;
+    }
+
+    friend std::istream& operator >> (std::istream &is, TBigInt &num) {
+        std::string str;
+        is >> str;
+        num = TBigInt(str);
+        return is;
+    }
+
+    friend bool operator < (const TBigInt &first, const TBigInt &second) {
+        if (first.Size() != second.Size()) {
+            return first.Size() < second.Size();
+        }
+        for (int i = first.Size() - 1; i >= 0 ; --i) {
+            if (first.bigInt[i] != second.bigInt[i]) {
+                return first.bigInt[i] < second.bigInt[i];
+            }
+        }
+        return false;
+    }
+
+    friend bool operator > (const TBigInt &first, const TBigInt &second) {
+        if (first.Size() != second.Size()) {
+            return first.Size() > second.Size();
+        }
+        for (int i = first.Size() - 1; i >=0 ; --i) {
+            if (first.bigInt[i] != second.bigInt[i]) {
+                return first.bigInt[i] > second.bigInt[i];
+            }
+        }
+        return false;
+    }
+
+    friend bool operator == (const TBigInt &first, const TBigInt &second) {
+        if (first.Size() != second.Size()) {
+            return false;
+        }
+        for (int i = first.Size() - 1; i >=0 ; --i) {
+            if (first.bigInt[i] != second.bigInt[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+};
+
+int main() {
+    TBigInt a, b;
+    char action;
+    while(!std::cin.eof()) {
+        std::cin >> a >> b >> action;
+        if (std::cin.eof()) {
+            break;
+        }
+        if (action == '+') {
+            std::cout << a + b << "\n";
+        } else if (action == '-') {
+            try {
+                std::cout << a - b << '\n';
+            } catch (...) {
+                std::cout << "Error\n";
+            }
+        } else if (action == '*') {
+            std::cout << a * b << '\n';
+        } else if (action == '/') {
+            try {
+                std::cout << a / b << '\n';
+            } catch (...) {
+                std::cout << "Error\n";
+            }
+        } else if (action == '^') {
+            try {
+                std::cout << (a ^ b) << '\n';
+            } catch (...) {
+                std::cout << "Error\n";
+            }
+        } else if (action == '<') {
+            if (a < b) {
+                std::cout << "true\n";
+            } else {
+                std::cout << "false\n";
+            }
+        } else if (action == '>') {
+            if (a > b) {
+                std::cout << "true\n";
+            } else {
+                std::cout << "false\n";
+            }
+        } else if (action == '=') {
+            if (a == b) {
+                std::cout << "true\n";
+            } else {
+                std::cout << "false\n";
+            }
+        }
+    }
+}
+\end{lstlisting}
+\pagebreak
+
+\section{Консоль}
+\begin{alltt}
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} make
+g++ -std=c++14 -O3 -Wextra -Wall -Wno-sign-compare -Wno-unused-result -pedantic -o solution main.cpp
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} cat tests/01.t
+7674067 3029597 /
+3970773 5168295 <
+6265336 3259557 <
+2166558 7442197 >
+1161742 8220457 <
+6059909 6215020 +
+5263670 8140694 -
+7468521 9612409 <
+4035847 2054982 /
+5535188 7 ^
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./solution < tests/01.t
+2
+true
+false
+false
+true
+12274929
+Error
+true
+1
+159193977005607594568706744201799696878947745792
+\end{alltt}
+\pagebreak
+

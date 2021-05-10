@@ -1,0 +1,34 @@
+\section{Тест производительности}
+Замеряется всё время работы программы, но, т.к. ввод одинаковый, то результаты репрезентативны. Для сравнения
+производительности была выбрана библиотека GMP.
+\\Количество строк (число число операция) для каждого файла равно десять в степени номер теста. 
+\\Например, $02.t$ содержит сто строк, а $07.t$ десять миллионов.
+
+\begin{alltt}
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark < tests/04.t > 04.a
+custom long arithmetics 46 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark1 < tests/04.t > 04.a
+custom long arithmetics 55 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark2 < tests/04.t > 04.a
+GMP arithmetics 33 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark1 < tests/06.t > 06.a
+custom long arithmetics 3666 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark1 < tests/05.t > 05.a
+custom long arithmetics 366 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark2 < tests/05.t > 05.a
+GMP arithmetics 280 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark1 < tests/06.t > 06.a
+custom long arithmetics 3751 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark2 < tests/06.t > 06.a
+GMP arithmetics 3060 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark1 < tests/07.t > 07.a
+custom long arithmetics 40647 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab6$} ./benchmark2 < tests/07.t > 07.a
+GMP arithmetics 30655 ms
+\end{alltt}
+
+Глядя на результаты, видно, что моя реализация однозначно уступает библиотеке GMP, но не стоит забывать,
+что для большинства операций мы использовали наивный алгоритм.
+
+\pagebreak
+
