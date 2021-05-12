@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(lab5 main.cpp suffTree.hpp)
 
-add_executable(emaxx tree.cpp)
+add_executable(benchmark benchmark.cpp)

@@ -1,0 +1,321 @@
+\section{Описание}
+Требуется написать реализацию алгоритма Укконнена для построения суффиксного дерева и при помощи него решить поставленную задачу.
+Мы будем строить явное суффиксное дерево, терминирующим символом будет $\$$.
+Опишем т.н. {\bfseries правила продолжения суффиксов:}
+\\Укажем точные правила для \textit {продолжения суффикса}. Пусть $S[j..i] = \beta$ - суффикс $S[1..i]$. В продолжении $j$, когда
+алгоритм находит конец $\beta$ в текущем дереве, он продолжает $\beta$, чтобы обеспечить присутствие суффикса $\beta S (i+1)$ в
+дереве. Алгоритм действует по одному из следующих трёх правил:
+\\{\bfseries Правило 1.} В текущем дереве путь $\beta$ кончается в листе. Это значит, что путь от корня с меткой $\beta$ доходит
+до конца некоторой "листовой"\ дуги (дуги, входящие в лист). При изменеии дерева нужно добавить к концу метки этой листовой дуги $S(i+1)$.
+\\{\bfseries Правило 2.} Ни один путь из конца строки $\beta$ не начинается символом $S(i+1)$, но по крайне мере один начинающийся оттуда
+путь имеется.
+В этом случае должна быть создана новая листовая дуга, начинающаяся в конце $\beta$ и помеченная символом $S(i+1)$. При этом, если $\beta$
+кончается внутри дуги, должна быть создана новая вершина. Листу в конце новой листовой дуги сопоставляется номер $j$.
+\\{\bfseries Правило 3.} Некоторый путь из конца строки $\beta$ начинается символом $S(i+1)$. В этом случае строка $\beta S(i+1)$ уже имеется
+в текущем дереве, так что ничего не надо делать.
+\\Для ускорения алгоритма используем суффиксные связи. Пусть $x\alpha$ обозначает произвольную строку, где $x$ - ее первый символ, а $\alpha$
+оставшаяся подстрока (возможно, пустая). Если для внутренней вершины $v$ с путевой меткой $x\alpha$ существует другая вершина $s(v)$ с путевой
+отметкой $\alpha$, то указатель из $v$ в $s(v)$ называется \textit{суффиксной связью}. Суффиксную связь будем обозначать парой $(v, s(v))$.
+Если строка $\alpha$ пуста, связь идёт в корневую вершину. Но это лишь уменьшает кол-во передвижений от корня в каждом продолжении.
+\\Для оптимизации алгоритма используем 3 приёма
+\\{\bfseries Приём 1.}
+\\"Перескок". Суть этого приёма заключается в том, что если мы хотим найти место для вставки вхождения строки в дерево, то мы не идём посимвольно,
+если длина строки $\gamma$ больше длины текущей дуги. В таком случае мы её просто пропускаем, а идти начинаем от $|\gamma|-$ длина дуги.
+\\{\bfseries Приём 2.}
+\\Заканчивать каждую фазу $i+1$ после первого же использования правила 3. Если это случится в продолжении $j$, то уже не требуется явно находить
+концов строк $S[k..i]$ с $k > j$. Также стоит учесть, что дуги мы "сжимаем"\ до дуговых меток, т.е. это у нас не массив суффиксов, а пара чисел $(p, e)$, 
+где $e$ - "текущий конец"\
+\\{\bfseries Приём 3.}
+\\Если дуга стала листовой - она таковой и останется. Из этого следует, что $e$ для листов можно ввести как глобальную переменную, и работать с 
+ней за константу.
+\pagebreak
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{lightgray}
+    \multicolumn{2}{|c|} {TNode}\\
+    \hline
+    TNode(TNode *link, int start, int *end)&конструктор дуги без индекса, используется при создании новых внутренних вершин\\
+    \hline
+    \hline
+    TNode(TNode *link, int start, int *end, int int)&Конструктор с индексом используется при создании лисьтев\\
+    \hline
+    map<char, TNode *> Children&Массив "детей".\\
+    \hline
+    TNode* SuffixLink&Суффиксная ссылка.\\
+    \hline
+    int Start&Индекс первого символа вершины в тексте.\\
+    \hline
+    \hline
+    int *End&Индекс последнего символа вершины в тексте\\
+    \hline
+    \hline
+    int SuffixIndex&Индекс суффикса.\\
+    \hline
+\end{longtable}
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{lightgray}
+    \multicolumn{2}{|c|} {TSuffixTree}\\
+    \hline
+    TSuffixTree(string \&text)&Конструктор дерева из строки.\\
+    \hline
+    \hline
+    void BuildSuffixTree()&Функция построения суффиксного дерева.\\
+    \hline
+    std::string Linearization(int n)&Функция линеаризации среза циклической строки.\\
+    \hline
+    ~TSuffixTree()&Деструктор\\
+    \hline
+    void LinHelp(TNode *curr, int n, std::string \&res)&Вспомагательная рекурсивная функция для вычисления линеаризованной строки.\\
+    \hline
+    \hline
+    void ExtendSuffixTree(int pos)&Расширение дерева.\\
+    \hline
+    \hline
+    void DeleteSuffixTree(TNode *TNode)&Вспомагательная функция для удаления суффиксного дерева.\\
+    \hline
+    \hline
+    int EdgeLength(TNode *TNode)&Вычисляет длину дуги.\\
+    \hline
+    \hline
+    TNode *Root&Указатель на корневой узел дерева.\\
+    \hline
+    \hline
+    TNode *LastCreatedInternalNode&Последняя созданная внутренняя вершина.\\
+    \hline
+    \hline
+    string Text&Текст, на основе которого было построено суфф. дерево.\\
+    \hline
+    \hline
+    TNode *ActiveNode&То, откуда начнется расширение на следующей фазе.\\
+    \hline
+    \hline
+    int ActiveEdge&Индекс символа, который задает движение из текущей ноды\\
+    \hline
+    \hline
+    int ActiveLength&на сколько символов идём в направлении activeEdge.\\
+    \hline
+    \hline
+    int RemainingSuffixCount&Сколько суффиксов осталось создать.\\
+    \hline
+    \hline
+    int LeafEnd&Глобальная переменная, "конец"\ листовой дуги.\\
+    \hline
+\end{longtable}
+Для того, чтобы линеаризовать срез циклической строки, надо понять, сколько срезов нам понадобится для нахождения минимального
+лексигографического среза. Допустим, что самый "маленький" символ находится в конце среза, и он в нём единственный. Это будет худший случай,
+для которого потребуется $n+n-1$ символов. Возьмём два среза для простоты, т.е. $2n$. Как найти минимальный срез при помощи суфф. дерева: от каждой вершины
+у нас идут дуги, нужно просто каждый раз выбирать минимальную дугу и доходить до конца суффикса. Если суффикс, например, размера меньше n, то надо
+вернуться на шаг назад и взять следующую по возрастанию дугу и т.д., пока мы не найдём нужный нам минимальный срез. Не во всех случаях найденный суффикс
+будет являться минимальным срезом строки, т.к. он может быть размера больше $n$, поэтому от первого такого найденного суффикса мы возвращаем первые $n$ символов,
+это и будет наш ответ.
+
+\pagebreak
+\section{Исходный код}
+\begin{lstlisting}[language=C++]
+//
+// suffTree.cpp
+//
+
+#pragma once
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+
+#define TERMINATION_SYMBOL '$'
+
+using namespace std;
+
+class TSuffixTree;
+
+class TNode
+{
+private:
+    map<char, TNode *> Children; 
+    TNode *SuffixLink;
+    int Start;
+    int *End;
+    int SuffixIndex;
+public:
+    friend TSuffixTree;
+
+
+    TNode(TNode *link, int start, int *end) : TNode(link, start, end, -1){
+    }
+
+
+    TNode(TNode *link, int start, int *end, int ind) :
+    SuffixLink(link),Start(start),End(end),SuffixIndex(ind){
+    }
+};
+
+class TSuffixTree
+{
+private:
+    void LinHelp(TNode *curr, int n, std::string &res){
+        if (!curr)
+            return;
+        for (auto it : curr->Children) {
+            LinHelp(it.second, n, res);
+            if(res != "") {
+                return;
+            }
+        }
+        if (curr->SuffixIndex != -1 && n <= *curr->End - curr->SuffixIndex + 1
+            && Text[curr->SuffixIndex + n - 1] != TERMINATION_SYMBOL) {
+            res = Text.substr(curr->SuffixIndex, n);
+        }
+    }
+    void ExtendSuffixTree(int pos){
+
+        LastCreatedInternalNode = nullptr;
+        LeafEnd++;
+        RemainingSuffixCount++;
+        while (RemainingSuffixCount > 0){
+            if (ActiveLength == 0) {
+                ActiveEdge = pos;
+            }
+
+            auto find = ActiveNode->Children.find(Text[ActiveEdge]);
+
+            if (find == ActiveNode->Children.end()){
+                ActiveNode->Children.insert(make_pair(Text[ActiveEdge],
+                                                      new TNode(Root, pos, &LeafEnd, pos - RemainingSuffixCount + 1)));
+
+                if (LastCreatedInternalNode != nullptr){
+                    LastCreatedInternalNode->SuffixLink = ActiveNode;
+                    LastCreatedInternalNode = nullptr;
+                }
+            }
+            else{
+
+                TNode *next = find->second;
+                int edge_length = EdgeLength(next);
+
+                if (ActiveLength >= edge_length){
+                    ActiveEdge += edge_length;
+                    ActiveLength -= edge_length;
+                    ActiveNode = next;
+                    continue;
+                }
+
+                if (Text[next->Start + ActiveLength] == Text[pos]){
+                    if (LastCreatedInternalNode != nullptr && ActiveNode != Root) {
+                        LastCreatedInternalNode->SuffixLink = ActiveNode;
+                    }
+                    ActiveLength++;
+                    break;
+                }
+
+                TNode *split = new TNode(Root, next->Start, new int(next->Start + ActiveLength - 1));
+                ActiveNode->Children[Text[ActiveEdge]] = split;
+                next->Start += ActiveLength;
+                split->Children.insert(make_pair(Text[pos], new TNode(Root, pos, &LeafEnd, pos - RemainingSuffixCount + 1)));
+                split->Children.insert(make_pair(Text[next->Start], next));
+                if (LastCreatedInternalNode != nullptr) {
+                    LastCreatedInternalNode->SuffixLink = split;
+                }
+                LastCreatedInternalNode = split;
+            }
+
+            RemainingSuffixCount--;
+
+            if (ActiveNode == Root && ActiveLength > 0){
+                ActiveLength--;
+                ActiveEdge++;
+            }
+            else if (ActiveNode != Root) {
+                ActiveNode = ActiveNode->SuffixLink;
+            }
+        }
+    }
+    void DeleteSuffixTree(TNode *TNode){
+        for (auto it : TNode->Children) {
+            DeleteSuffixTree(it.second);
+        }
+        if (TNode->SuffixIndex == -1)
+            delete TNode->End;
+        delete TNode;
+    }
+    int EdgeLength(TNode *TNode){
+        return *TNode->End - TNode->Start + 1;
+    }
+
+
+    TNode *Root = new TNode(nullptr, -1, new int(-1));
+    TNode *LastCreatedInternalNode = nullptr;
+    string Text;
+
+    TNode *ActiveNode = nullptr;
+    int ActiveEdge = -1;
+    int ActiveLength = 0;
+    int RemainingSuffixCount = 0;
+    int LeafEnd = -1;
+public:
+    TSuffixTree(string &text){
+        this->Text += text+TERMINATION_SYMBOL;
+        BuildSuffixTree();
+    }
+    void BuildSuffixTree(){
+        ActiveNode = Root;
+        for (size_t i = 0; i < Text.length(); i++) {
+            ExtendSuffixTree(i);
+        }
+    }
+    std::string Linearization(int n){
+        TNode *current = Root;
+        std::string res = "";
+        for (int i = 0; i < n; ++i){
+            auto it = current->Children.begin();
+            for (;it != current->Children.end(); ++it){
+                LinHelp(it->second, n, res);
+                if(res != ""){
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    ~TSuffixTree() {
+        DeleteSuffixTree(Root);
+    }
+};
+\end{lstlisting}
+\begin{lstlisting}
+[language=C++]
+//
+// main.cpp
+//
+#include <iostream>
+#include "suffTree.hpp"
+int main(){
+    ios::sync_with_stdio(0);
+    cout.tie(0), cin.tie(0);
+    string text, pattern;
+    cin >> text;
+    int n = text.size();
+    text = text+text;
+    TSuffixTree suffixTree(text);
+    std::string res = suffixTree.Linearization(n);
+    std::cout << res << "\n";
+    return 0;
+}
+\end{lstlisting}
+\pagebreak
+
+\section{Консоль}
+\begin{alltt}
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab5$} make
+g++ -std=c++14 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic -o solution main.cpp
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab5$}  cat tests/01.t && ./solution < tests/01.t
+ixtvoqfzlx
+fzlxixtvoq
+\end{alltt}
+\pagebreak
+
