@@ -1,0 +1,26 @@
+\section{Тест производительности}
+Сравнивать наш алгоритм будем с наивной реализацией, т.е. мы пройдёмся по всем путям от $n$ до 1 и выберем из них минимальный.
+
+\begin{alltt}
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} make benchmark
+g++ -std=c++14 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic benchmark.cpp -o benchmark.o
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} ./benchmark.o > temp
+100
+Dynamic programming solution time 80 ms
+Naive algorithm solution time 0 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} ./benchmark.o > temp
+500
+Dynamic programming solution time 82 ms
+Naive algorithm solution time 630 ms
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} ./benchmark.o > temp
+1000
+Dynamic programming solution time 81 ms
+Naive algorithm solution time 50940 ms
+\end{alltt}
+
+Глядя на результаты можно легко заметить одно из главных преимуществ динамического программирования - это почти неизменное время работы.
+Да, на совсем маленьком тесте динамическое программирование уступило наивному поиску, но чем больше был тест, тем больше была разница во
+времени.
+
+\pagebreak
+

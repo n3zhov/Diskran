@@ -1,0 +1,184 @@
+\section{Описание}
+Требуется описать метод динамического программирования, который позволит решить поставленную задачу. Итак, нам нужно
+уменьшить число $n$ до 1 имея три операции ($-1 /2 /3$). Для того, чтобы быстро найти ответ построим массив всех ответов $ans$
+(массив состоит из элементов, которые содержат в себе мин. стоимость cost и следующий шаг operation), где по индексу $i$ будет 
+храниться минимальная стоимость превращения $i$ в 1, а также одна из 3-х операций, которая является
+следующим шагом для уменьшения числа до 1. Находить ответы будем от меньшего к большему, т.е. мы начнём с 1 и будем идти до $10^7$.
+Наименьшая стоимость на текущем шаге складывается из числа $i + min(ans[i-1].count, min(ans[i/3].count, ans[i/2].count))$. Естественно, 
+чтобы проверить $ans[i/2].count$ и $ans[i/3].count$ мы сначала проверяем $i\%2==0$ и $i\%3==0$. Найдя минимум, прибавляем его к нашему
+текущему числу (это и будет минимальная стоимость для текущего числа), а операцию приравниваем в соответствии с минимумом (если минимальный
+$i-1$ то -1, если $i/2$ то /2, если $i/3$ то /3). После того, как мы подсчитали $ans[i]$ делаем $i++$, и начинаем алгоритм, описанный выше,
+сначала. Оценка построения массива ответов $O(3n)$, но т.к. константы не учитываются, то сложность будет $O(n)$. А время получения ответа для
+конкретного числа также не может быть больше $O(n)$ (нам приходиться идти по всему массиву до 1, т.к. для хранения всех операций для каждого числа
+потребуется слишком много памяти + активное копирование строк замедляет программу).
+\pagebreak
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{lightgray}
+    \multicolumn{2}{|c|} {TNumber}\\
+    \hline
+    TNumber()&Конструктор для числа.\\
+    \hline
+    long long const&Минимальная стоимость преобразования числа в 1.\\
+    \hline
+    std::string *operation&Указатель на строку, содержащую в себе операцию, которая ведёт к минимальному пути.\\
+    \hline
+    bool operator <(TNumber \&lhs, TNumber \&rhs)&Оператор сравнения TNumber, который сравнивает поля cost.\\
+    \hline
+    std::ostream \&operator << (std::ostream \&of, TNumber \&number)&Оператор вывода для TNumber (выводит операцию минимального пути).\\
+    \hline
+\end{longtable}
+
+\begin{longtable}{|p{7.5cm}|p{7.5cm}|}
+    \hline
+    \rowcolor{lightgray}
+    \multicolumn{2}{|c|} {TDynVector}\\
+    \hline
+    TDynVector() = default&Стандартный конструктор для массива ответов.\\
+    \hline
+    TDynVector(long long size)&Конструктор с указанием максимального числа $n$.\\
+    \hline
+    void Print(long long n)&Распечатать решение минимальное решение для числа $n$.\\
+    \hline
+    void PrintHelper(long long n)&Вспомагательная рекурсивная функция для печати оставшейся части решения.\\
+    \hline
+    TNumber\& operator[](const long long index)&Оператор для получения элемента по индексу.\\
+    \hline
+    ~TDynVector()&Деструктор для массива ответов.\\
+    \hline
+    void CountCost()&Функция подсчёта решений для всех чисел $2 \leq i \geq 10^7$.\\
+    \hline
+    lonh lonh Size&Размер массива ответов.\\
+    \hline
+    TNumber *Data&Указатель на массив, где хранятся решения.\\
+    \hline
+    std::string empty&Пустая строка.\\
+    \hline
+    std::string fType = "-1 "\ &Строка действия, указатель на которую будет хранится в TNumber.operation (также для "/2 " и "/3 ").\\
+    \hline
+\end{longtable}
+
+
+\pagebreak
+\section{Исходный код}
+\begin{lstlisting}[language=C++]
+//
+// struct.hpp
+//
+#include <string>
+#include <iostream>
+#include <vector>
+
+struct TNumber{
+    long long cost;
+    std::string *operation;
+    TNumber(){
+        cost = 0;
+    }
+};
+
+bool operator <(TNumber &lhs, TNumber &rhs){
+    return lhs.cost < rhs.cost;
+}
+
+std::ostream &operator << (std::ostream &of, TNumber &number){
+    of << *number.operation;
+    return of;
+}
+
+class TDynVector{
+private:
+    std::string empty;
+    std::string fType = "-1 ";
+    std::string sType = "/2 ";
+    std::string tType = "/3 ";
+    TNumber *Data;
+    long long Size = 0;
+    void CountCost(){
+        Data[1].operation = &empty;
+        long long currIndex = 2;
+        std::string *operation = &empty;
+        while(currIndex != Size + 1){
+            long long minCost = -1;
+            if(currIndex % 3 == 0){
+                minCost = Data[currIndex/3].cost;
+                operation = &tType;
+            }
+            if(currIndex % 2 == 0 && (Data[currIndex/2].cost < minCost || minCost == -1)){
+                minCost = Data[currIndex / 2].cost;
+                operation = &sType;
+            }
+            if (currIndex - 1 > 0 && (Data[currIndex-1].cost < minCost || minCost == -1)){
+                minCost = Data[currIndex - 1].cost;
+                operation = &fType;
+            }
+            Data[currIndex].cost = minCost + currIndex;
+            Data[currIndex].operation = operation;
+            ++currIndex;
+        }
+    }
+public:
+    TDynVector() = default;
+    TDynVector(long long size){
+        Data = new TNumber[size + 1];
+        this->Size = size;
+        this->CountCost();
+    }
+    void Print(long long n){
+        std::cout << this->Data[n].cost << "\n";
+        PrintHelper(n);
+    }
+    void PrintHelper(long long n){
+        std::cout << this->Data[n];
+        if(n != 1) {
+            if (this->Data[n].operation == &tType) {
+                PrintHelper(n / 3);
+            } else if (this->Data[n].operation == &sType) {
+                PrintHelper(n / 2);
+            } else if (this->Data[n].operation == &fType) {
+                PrintHelper(n - 1);
+            }
+        }
+    }
+    TNumber& operator[](const long long index){
+        return Data[index];
+    }
+    ~TDynVector(){
+        delete [] Data;
+    }
+};
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++]
+//
+// main.cpp
+//
+#include "struct.hpp"
+int main(){
+    std::cin.tie(nullptr);
+    std::cout.tie(nullptr);
+    std::ios_base::sync_with_stdio(false);
+    long long n;
+    TDynVector dynVector(10000000);
+    if(std::cin >> n){
+        dynVector.Print(n);
+    }
+    std::cout << "\n";
+    return 0;
+}
+
+\end{lstlisting}
+\pagebreak
+
+\section{Консоль}
+\begin{alltt}
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} make
+g++ -std=c++14 -O3 -Wextra -Wall -Werror -Wno-sign-compare -Wno-unused-result -pedantic -o solution main.cpp
+{\color{blue} nezhov@killswitch:~/CLionProjects/Diskran/lab7$} ./solution
+82
+202
+-1 /3 /3 /3 /3 
+\end{alltt}
+\pagebreak
+
